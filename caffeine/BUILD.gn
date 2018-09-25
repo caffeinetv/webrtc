@@ -1,0 +1,45 @@
+# Copyright (c) 2018 Caffeine Inc.
+# All rights reserved
+
+import("../webrtc.gni")
+
+group("caffeine") {
+  deps = [
+    ":caffeine-rtc"
+  ]
+}
+
+# TODO mac & linux
+rtc_shared_library("caffeine-rtc") {
+  sources = [
+    "caffeine.def",
+  ]
+
+  deps = [
+    ":caffeine-rtc-static",
+  ]
+
+  output_extension = "dll"
+}
+
+rtc_static_library("caffeine-rtc-static") {
+  sources = [
+    "caffeine.cc",
+    "caffeine.h",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    "../pc:libjingle_peerconnection",
+    "../third_party/libyuv",
+    "../third_party/jsoncpp",
+    "../system_wrappers:runtime_enabled_features_default",
+    "../system_wrappers:field_trial_default",
+    "../system_wrappers:metrics_default",
+    "../pc:rtc_pc",
+  ]
+}

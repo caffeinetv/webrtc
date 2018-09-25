@@ -30,6 +30,7 @@ if (!build_with_chromium) {
     testonly = true
     deps = [
       ":webrtc",
+      "caffeine",
     ]
     if (rtc_build_examples) {
       deps += [ "examples" ]
