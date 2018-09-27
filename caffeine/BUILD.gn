@@ -26,6 +26,8 @@ rtc_static_library("caffeine-rtc-static") {
   sources = [
     "caffeine.cc",
     "caffeine.h",
+    "logsink.cc",
+    "logsink.h",
   ]
 
   if (!build_with_chromium && is_clang) {

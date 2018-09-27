@@ -1,49 +1,56 @@
+/*
+ *  Copyright 2018 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
 #include "caffeine.h"
+#include "logsink.h"
 
-#include <iostream>
+#include <rtc_base/ssladapter.h>
 
-#include "api/peerconnectioninterface.h"
+#ifdef _WIN32
+#include <rtc_base/win32socketinit.h>
+#endif
 
-class PCO : public webrtc::PeerConnectionObserver
+extern "C" 
+bool caff_initialize(caff_log_callback_t log_callback, caff_log_severity min_severity)
 {
-    void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState new_state) override
-    {
-        std::cout << "OnSignalingChange " << new_state << std::endl;
+    static bool initialized = false;
+    if (initialized) {
+        RTC_LOG(LS_WARNING) << "Caffeine RTC is already initialized";
+        return false;
     }
 
-    void OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel) override
+    // Set up logging
+
+    rtc::LogMessage::LogThreads(true);
+    rtc::LogMessage::LogTimestamps(true);
+
+    // Send logs only to our log sink. Not to stderr, windows debugger, etc
+    rtc::LogMessage::LogToDebug(rtc::LoggingSeverity::LS_NONE);
+    rtc::LogMessage::SetLogToStderr(false);
+
+    // TODO: Figure out why this log sink isn't working
+    rtc::LogMessage::AddLogToStream(new caff::LogSink(log_callback),
+                                    static_cast<rtc::LoggingSeverity>(min_severity));
+
+    // Initialize WebRTC
+
+#ifdef _WIN32
+    rtc::EnsureWinsockInit();
+#endif
+    if (!rtc::InitializeSSL())
     {
-        std::cout << "OnDataChannel " << data_channel->id() << std::endl;
+        RTC_LOG(LS_ERROR) << "Caffeine RTC failed to initialize SSL";
+        return false;
     }
 
-    void OnRenegotiationNeeded() override
-    {
-        std::cout << "OnRenegotiationNeeded" << std::endl;
-    }
-
-    void OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState new_state) override
-    {
-        std::cout << "OnIceConnectionChange " << new_state << std::endl;
-    }
-
-    void OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState new_state) override
-    {
-        std::cout << "OnIceGatheringChange " << new_state << std::endl;
-    }
-
-    void OnIceCandidate(const webrtc::IceCandidateInterface* candidate) override
-    {
-        std::cout << "OnIceCandidate ";
-        if (candidate) {
-            std::cout << candidate->server_url();
-        }
-        std::cout << std::endl;
-    }
-};
-
-
-extern "C" bool TestStub() {
-    PCO pco;
-    std::cerr << "This is only a stub.\n";
+    RTC_LOG(LS_INFO) << "Caffeine RTC initialized";
+    initialized = true;
     return true;
 }
