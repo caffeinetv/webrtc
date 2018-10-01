@@ -24,10 +24,18 @@ rtc_shared_library("caffeine-rtc") {
 
 rtc_static_library("caffeine-rtc-static") {
   sources = [
+    "audiodevicedefaultimpl.h",
+    "broadcast.cc",
+    "broadcast.h",
+    "broadcastaudiodevice.cc",
+    "broadcastaudiodevice.h",
     "caffeine.cc",
     "caffeine.h",
+    "interface.cc",
+    "interface.h",
     "logsink.cc",
     "logsink.h",
+    "peerconnectionobserver.h",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -36,6 +44,10 @@ rtc_static_library("caffeine-rtc-static") {
   }
 
   deps = [
+    "../api/audio_codecs:builtin_audio_decoder_factory",
+    "../api/audio_codecs:builtin_audio_encoder_factory",
+    "../api/video_codecs:builtin_video_decoder_factory",
+    "../api/video_codecs:builtin_video_encoder_factory",
     "../pc:libjingle_peerconnection",
     "../third_party/libyuv",
     "../third_party/jsoncpp",

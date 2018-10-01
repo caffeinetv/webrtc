@@ -9,23 +9,25 @@
  */
 
 #include "caffeine.h"
-#include "logsink.h"
 
-#include <rtc_base/ssladapter.h>
+#include "broadcast.h"
+#include "interface.h"
+#include "logsink.h"
+#include "peerconnectionobserver.h"
+
+#include "rtc_base/ssladapter.h"
 
 #ifdef _WIN32
-#include <rtc_base/win32socketinit.h>
+#include "rtc_base/win32socketinit.h"
 #endif
 
-extern "C" 
-bool caff_initialize(caff_log_callback_t log_callback, caff_log_severity min_severity)
-{
-    static bool initialized = false;
-    if (initialized) {
-        RTC_LOG(LS_WARNING) << "Caffeine RTC is already initialized";
-        return false;
-    }
+extern "C" {
 
+caff_interface_handle caff_initialize(
+    caff_log_callback_t log_callback,
+    enum caff_log_severity min_severity) {
+  static bool first_init = true;
+  if (first_init) {
     // Set up logging
 
     rtc::LogMessage::LogThreads(true);
@@ -36,21 +38,55 @@ bool caff_initialize(caff_log_callback_t log_callback, caff_log_severity min_sev
     rtc::LogMessage::SetLogToStderr(false);
 
     // TODO: Figure out why this log sink isn't working
-    rtc::LogMessage::AddLogToStream(new caff::LogSink(log_callback),
-                                    static_cast<rtc::LoggingSeverity>(min_severity));
+    rtc::LogMessage::AddLogToStream(
+        new caff::LogSink(log_callback),
+        static_cast<rtc::LoggingSeverity>(min_severity));
 
     // Initialize WebRTC
 
 #ifdef _WIN32
     rtc::EnsureWinsockInit();
 #endif
-    if (!rtc::InitializeSSL())
-    {
-        RTC_LOG(LS_ERROR) << "Caffeine RTC failed to initialize SSL";
-        return false;
+    if (!rtc::InitializeSSL()) {
+      RTC_LOG(LS_ERROR) << "Caffeine RTC failed to initialize SSL";
+      return nullptr;
     }
 
     RTC_LOG(LS_INFO) << "Caffeine RTC initialized";
-    initialized = true;
-    return true;
+  }
+
+  return new caff::Interface;
 }
+
+caff_broadcast_handle caff_start_broadcast(
+    caff_interface_handle interface_handle,
+    void* user_data,
+    caff_broadcast_started_t started_callback,
+    caff_broadcast_failed_t failed_callback) {
+  auto interface = reinterpret_cast<caff::Interface*>(interface_handle);
+  auto factory = interface->GetFactory();
+  webrtc::PeerConnectionInterface::IceServer server;
+  server.urls.push_back("stun:stun.l.google.com:19302");
+
+  webrtc::PeerConnectionInterface::RTCConfiguration config;
+  config.servers.push_back(server);
+
+  auto observer = new caff::PeerConnectionObserver();
+
+  auto peerConnection = factory->CreatePeerConnection(
+      config, webrtc::PeerConnectionDependencies(observer));
+
+  started_callback(user_data);
+  return new caff::Broadcast;
+}
+
+void caff_deinitialize(caff_interface_handle interface_handle) {
+  if (interface_handle == nullptr) {
+    RTC_LOG(LS_WARNING) << "deinitializing nullptr";
+    return;
+  }
+  auto interface = reinterpret_cast<caff::Interface*>(interface_handle);
+  delete interface;
+}
+
+} // extern "C"

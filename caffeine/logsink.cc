@@ -10,26 +10,24 @@
 
 #include "logsink.h"
 
-#include <sstream>
 #include <iostream>
+#include <sstream>
 
 namespace caff {
-    void LogSink::OnLogMessage(const std::string& message,
-                              rtc::LoggingSeverity severity,
-                              const char* tag)
-    {
-        if (!callback)
-            return;
+void LogSink::OnLogMessage(const std::string& message,
+                           rtc::LoggingSeverity severity,
+                           const char* tag) {
+  if (!callback)
+    return;
 
-        std::ostringstream outstr;
-        outstr << '[' << tag << "]: " << message;
-        auto finalMessage = outstr.str().c_str();
+  std::ostringstream outstr;
+  outstr << '[' << tag << "]: " << message;
+  auto finalMessage = outstr.str().c_str();
 
-        callback(static_cast<caff_log_severity>(severity), finalMessage);
-    }
-
-    void LogSink::OnLogMessage(const std::string& message)
-    {
-        // unused helper called by default implementation of other overload
-    }
+  callback(static_cast<caff_log_severity>(severity), finalMessage);
 }
+
+void LogSink::OnLogMessage(const std::string& message) {
+  // unused helper called by default implementation of other overload
+}
+}  // namespace caff
