@@ -24,8 +24,8 @@ namespace caff {
 
 extern "C" {
 
-caff_interface_handle caff_initialize(caff_log_callback_t log_callback,
-                                      enum caff_log_severity min_severity) {
+caff_interface_handle caff_initialize(caff_log_callback log_callback,
+                                      caff_log_severity min_severity) {
   RTC_DCHECK(log_callback);
 
   static bool first_init = true;
@@ -58,14 +58,15 @@ caff_interface_handle caff_initialize(caff_log_callback_t log_callback,
     first_init = false;
   }
 
-  return new Interface;
+  auto interface = new Interface;
+  return reinterpret_cast<caff_interface_handle>(interface);
 }
 
 caff_broadcast_handle caff_start_broadcast(
     caff_interface_handle interface_handle,
     void* user_data,
-    caff_broadcast_started_t started_callback,
-    caff_broadcast_failed_t failed_callback) {
+    caff_broadcast_started started_callback,
+    caff_broadcast_failed failed_callback) {
   RTC_DCHECK(interface_handle);
   RTC_DCHECK(started_callback);
   RTC_DCHECK(failed_callback);
@@ -77,7 +78,8 @@ caff_broadcast_handle caff_start_broadcast(
   };
 
   auto interface = reinterpret_cast<Interface*>(interface_handle);
-  return interface->StartBroadcast(startedCallback, failedCallback);
+  auto broadcast = interface->StartBroadcast(startedCallback, failedCallback);
+  return reinterpret_cast<caff_broadcast_handle>(broadcast);
 }
 
 void caff_deinitialize(caff_interface_handle interface_handle) {

@@ -17,7 +17,7 @@
 namespace {
 // Protect against changes in underlying enum
 
-constexpr bool isEnumEqual(enum caff_log_severity caff,
+constexpr bool isEnumEqual(caff_log_severity caff,
                            rtc::LoggingSeverity rtc) {
   return caff == static_cast<caff_log_severity>(rtc);
 }
@@ -42,7 +42,7 @@ namespace caff {
 // Basic log sink class to call up into C clients
 class LogSink : public rtc::LogSink {
  public:
-  LogSink(caff_log_callback_t cb) : callback(cb) {}
+  LogSink(caff_log_callback cb) : callback(cb) {}
 
   void OnLogMessage(const std::string& message,
                     rtc::LoggingSeverity severity,
@@ -51,7 +51,7 @@ class LogSink : public rtc::LogSink {
   void OnLogMessage(const std::string& message) override;
 
  private:
-  caff_log_callback_t callback;
+  caff_log_callback callback;
 };
 
 }  // namespace caff
