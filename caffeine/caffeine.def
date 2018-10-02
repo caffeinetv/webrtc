@@ -1,4 +1,5 @@
 EXPORTS
 caff_initialize
 caff_start_broadcast
+caff_end_broadcast
 caff_deinitialize

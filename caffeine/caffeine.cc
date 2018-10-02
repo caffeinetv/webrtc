@@ -82,6 +82,14 @@ caff_broadcast_handle caff_start_broadcast(
   return reinterpret_cast<caff_broadcast_handle>(broadcast);
 }
 
+void caff_end_broadcast(caff_broadcast_handle broadcast_handle) {
+  RTC_DCHECK(broadcast_handle);
+  auto broadcast = reinterpret_cast<Broadcast*>(broadcast_handle);
+  // TODO
+  delete broadcast;
+  RTC_LOG(LS_INFO) << "Caffeine broadcast ended";
+}
+
 void caff_deinitialize(caff_interface_handle interface_handle) {
   RTC_DCHECK(interface_handle);
   auto interface = reinterpret_cast<Interface*>(interface_handle);

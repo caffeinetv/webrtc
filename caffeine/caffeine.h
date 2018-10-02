@@ -93,7 +93,15 @@ caff_broadcast_handle caff_start_broadcast(
 /* caff_send_video(caff_broadcast_handle, some_data...) */
 /* caff_send_audio(caff_broadcast_handle, some_data...) */
 
-/* caff_end_broadcast(caff_broadcast_handle) */
+
+/* End a Caffeine broadcast
+ *
+ * This signals the server to end the broadcast and closes the RTC connection.
+ *
+ * broadcast_handle: the broadcast handle received from caff_start_broadcast.
+ *     This handle will no longer be valid after the function returns.
+ */
+void caff_end_broadcast(caff_broadcast_handle broadcast_handle);
 
 
 /* Deinitialize Caffeine library
@@ -101,7 +109,7 @@ caff_broadcast_handle caff_start_broadcast(
  * This destroys the internal factory objects, shuts down worker threads, etc.
  *
  * interface_handle: the interface handle received from caff_initialize. This
- *     handle will no longer be valid after the function returns
+ *     handle will no longer be valid after the function returns.
  */
 void caff_deinitialize(caff_interface_handle interface_handle);
 
