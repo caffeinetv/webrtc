@@ -28,10 +28,10 @@ caff_interface_handle caff_initialize(caff_log_callback log_callback,
                                       caff_log_severity min_severity) {
   RTC_DCHECK(log_callback);
 
+  // TODO: make this thread safe?
   static bool first_init = true;
   if (first_init) {
     // Set up logging
-
     rtc::LogMessage::LogThreads(true);
     rtc::LogMessage::LogTimestamps(true);
 
@@ -86,6 +86,7 @@ void caff_deinitialize(caff_interface_handle interface_handle) {
   RTC_DCHECK(interface_handle);
   auto interface = reinterpret_cast<Interface*>(interface_handle);
   delete interface;
+  RTC_LOG(LS_INFO) << "Caffeine RTC deinitialized";
 }
 
 }  // extern "C"
