@@ -35,10 +35,11 @@ static_assert(isEnumEqual(CAFF_LOG_ERROR, rtc::LoggingSeverity::LS_ERROR),
               "mismatch between caff_log_severity and rtc::LoggingSeverity");
 static_assert(isEnumEqual(CAFF_LOG_NONE, rtc::LoggingSeverity::LS_NONE),
               "mismatch between caff_log_severity and rtc::LoggingSeverity");
-}  // namespace
+}  // anonymous namespace
 
 namespace caff {
 
+// Basic log sink class to call up into C clients
 class LogSink : public rtc::LogSink {
  public:
   LogSink(caff_log_callback_t cb) : callback(cb) {}

@@ -10,7 +10,9 @@
 
 #include "interface.h"
 
+#include "broadcast.h"
 #include "broadcastaudiodevice.h"
+#include "peerconnectionobserver.h"
 
 #include "api/peerconnectioninterface.h"
 
@@ -36,7 +38,6 @@ namespace caff {
     signalingThread->SetName("caffeine-signaling", nullptr);
     signalingThread->Start();
 
-    // TODO: real audio device thingy
     auto adm =
         workerThread->Invoke<rtc::scoped_refptr<webrtc::AudioDeviceModule>>(
             RTC_FROM_HERE, [] { return new BroadcastAudioDevice(); });
@@ -55,9 +56,24 @@ namespace caff {
     factory = nullptr;
   }
 
-  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>
-	  Interface::GetFactory() const {
-    return factory;
+  Broadcast* Interface::StartBroadcast(
+      std::function<void()> startedCallback,
+      std::function<void(caff_error)> failedCallback) {
+    webrtc::PeerConnectionInterface::IceServer server;
+    server.urls.push_back("stun:stun.l.google.com:19302");
+
+    webrtc::PeerConnectionInterface::RTCConfiguration config;
+    config.servers.push_back(server);
+
+    auto observer = new PeerConnectionObserver();
+
+    auto peerConnection = factory->CreatePeerConnection(
+        config, webrtc::PeerConnectionDependencies(observer));
+
+    // TODO: signaling
+    startedCallback();
+
+    return new Broadcast;
   }
 
   }

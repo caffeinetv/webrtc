@@ -10,6 +10,10 @@
 
 #pragma once
 
+#include "caffeine.h"
+
+#include <functional>
+
 #include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
@@ -21,6 +25,7 @@ class Thread;
 }
 
 namespace caff {
+class Broadcast;
 
 class Interface {
  public:
@@ -28,7 +33,8 @@ class Interface {
 
   virtual ~Interface();
 
-  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> GetFactory() const;
+  Broadcast* StartBroadcast(std::function<void()> startedCallback,
+                            std::function<void(caff_error)> failedCallback);
 
  private:
   rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory;

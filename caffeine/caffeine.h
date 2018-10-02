@@ -83,6 +83,15 @@ caff_broadcast_handle caff_start_broadcast(
 
 /* caff_end_broadcast(caff_broadcast_handle) */
 
+
+/* Deinitialize caffeine library
+ *
+ * This destroys the internal factory objects, releases handles to threads, etc.
+ * caff_interface_handles obtained prior to this will be invalidated. Call
+ * caff_initialize to use the library again.
+ *
+ * interface_handle: the interface handle received from caff_initialize
+ */
 void caff_deinitialize(caff_interface_handle interface_handle);
 
 #ifdef __cplusplus
