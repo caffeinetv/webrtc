@@ -9,3 +9,15 @@
  */
 
 #include "broadcast.h"
+
+#include "api/mediastreaminterface.h"
+
+namespace caff {
+
+Broadcast::Broadcast(
+    rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
+    : stream(stream) {}
+
+Broadcast::~Broadcast() {}
+
+}  // namespace caff

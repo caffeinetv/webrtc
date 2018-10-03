@@ -13,6 +13,7 @@
 #include "broadcast.h"
 #include "broadcastaudiodevice.h"
 #include "peerconnectionobserver.h"
+#include "sessiondescriptionobserver.h"
 
 #include "api/peerconnectioninterface.h"
 
@@ -70,10 +71,93 @@ namespace caff {
     auto peerConnection = factory->CreatePeerConnection(
         config, webrtc::PeerConnectionDependencies(observer));
 
+    // TODO: video
+    //auto capturer = createvideocapturer
+    //auto videoSource = factory->CreateVideoSource(capturer);
+    //auto videoTrack = factory->CreateVideoTrack("external_video", videoSource);
+
+    auto audioSource = factory->CreateAudioSource(cricket::AudioOptions());
+    auto audioTrack = factory->CreateAudioTrack("external_audio", audioSource);
+
+    auto stream = factory->CreateLocalMediaStream("caffeine_stream");
+    //stream->AddTrack(videoTrack);
+    stream->AddTrack(audioTrack);
+
+    rtc::scoped_refptr<CreateSessionDescriptionObserver> createObserver =
+        new rtc::RefCountedObject<CreateSessionDescriptionObserver>;
+
+    webrtc::PeerConnectionInterface::RTCOfferAnswerOptions options;
+
+    // TODO: do this stuff asynchronously
+    peerConnection->CreateOffer(createObserver, options);
+    auto offer = createObserver->GetFuture().get();
+    if (!offer) {
+      // Logged by the observer
+      return nullptr;
+    }
+
+    if (offer->type() != webrtc::SessionDescriptionInterface::kOffer) {
+      RTC_LOG(LS_ERROR) << "Expected "
+                        << webrtc::SessionDescriptionInterface::kOffer
+                        << " but got " << offer->type();
+      return nullptr;
+    }
+
+    std::string offerSdp;
+    if (!offer->ToString(&offerSdp)) {
+      RTC_LOG(LS_ERROR) << "Error serializing SDP offer";
+      return nullptr;
+    }
+
     // TODO: signaling
+
+    // Send offer to CDN
+    // build sdp answers
+
+    webrtc::SdpParseError offerError;
+    auto localDesc = webrtc::CreateSessionDescription(webrtc::SdpType::kOffer,
+                                                      offerSdp, &offerError);
+    if (!localDesc) {
+      RTC_LOG(LS_ERROR) << "Error parsing SDP offer: "
+                        << offerError.description;
+      return nullptr;
+    }
+
+    rtc::scoped_refptr<SetSessionDescriptionObserver> setLocalObserver =
+        new rtc::RefCountedObject<SetSessionDescriptionObserver>;
+
+    peerConnection->SetLocalDescription(setLocalObserver, localDesc.release());
+    auto setLocalSuccess = setLocalObserver->GetFuture().get();
+    if (!setLocalSuccess) {
+      // Logged by the observer
+      return nullptr;
+    }
+
+    std::string answerSdp;
+
+    webrtc::SdpParseError answerError;
+    auto remoteDesc = webrtc::CreateSessionDescription(webrtc::SdpType::kAnswer,
+                                                       answerSdp, &answerError);
+    if (!remoteDesc) {
+      RTC_LOG(LS_ERROR) << "Error parsing SDP answer: "
+                        << answerError.description;
+      return nullptr;
+    }
+
+    rtc::scoped_refptr<SetSessionDescriptionObserver> setRemoteObserver =
+        new rtc::RefCountedObject<SetSessionDescriptionObserver>;
+
+    peerConnection->SetRemoteDescription(setRemoteObserver,
+                                         remoteDesc.release());
+    auto setRemoteSuccess = setRemoteObserver->GetFuture().get();
+    if (!setRemoteSuccess) {
+      // Logged by the observer
+      return nullptr;
+    }
+
     startedCallback();
 
-    return new Broadcast;
+    return new Broadcast(stream);
   }
 
-  }
+  }  // namespace caff

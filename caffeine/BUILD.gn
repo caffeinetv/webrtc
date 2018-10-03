@@ -35,7 +35,10 @@ rtc_static_library("caffeine-rtc-static") {
     "interface.h",
     "logsink.cc",
     "logsink.h",
+    "peerconnectionobserver.cc",
     "peerconnectionobserver.h",
+    "sessiondescriptionobserver.cc",
+    "sessiondescriptionobserver.h",
   ]
 
   if (!build_with_chromium && is_clang) {

@@ -10,33 +10,29 @@
 
 #pragma once
 
-#include "caffeine.h"
-
 #include "api/peerconnectioninterface.h"
 
 namespace caff {
 
 class PeerConnectionObserver : public webrtc::PeerConnectionObserver {
- public:
   RTC_DISALLOW_COPY_AND_ASSIGN(PeerConnectionObserver);
-
-  PeerConnectionObserver() {}
+ public:
+  PeerConnectionObserver();
 
   void OnSignalingChange(
-      webrtc::PeerConnectionInterface::SignalingState new_state) override {}
-  void OnRenegotiationNeeded() override {}
+      webrtc::PeerConnectionInterface::SignalingState new_state) override;
+  void OnRenegotiationNeeded() override;
   void OnIceConnectionChange(
-      webrtc::PeerConnectionInterface::IceConnectionState new_state) override {}
+      webrtc::PeerConnectionInterface::IceConnectionState new_state) override;
   void OnAddStream(
-      rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override {}
+      rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override;
   void OnRemoveStream(
-      rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override {}
+      rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override;
   void OnDataChannel(
-      rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel) override {}
+      rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel) override;
   void OnIceGatheringChange(
-      webrtc::PeerConnectionInterface::IceGatheringState new_state) override {}
-  void OnIceCandidate(webrtc::IceCandidateInterface const* candidate) override {
-  }
+      webrtc::PeerConnectionInterface::IceGatheringState new_state) override;
+  void OnIceCandidate(webrtc::IceCandidateInterface const* candidate) override;
 };
 
 }  // namespace caff

@@ -10,7 +10,21 @@
 
 #pragma once
 
-namespace caff
-{
-class Broadcast {};
+#include "rtc_base/scoped_ref_ptr.h"
+
+namespace webrtc {
+class MediaStreamInterface;
 }
+
+namespace caff {
+
+class Broadcast {
+ public:
+  Broadcast(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream);
+  virtual ~Broadcast();
+
+ private:
+  rtc::scoped_refptr<webrtc::MediaStreamInterface> stream;
+};
+
+}  // namespace caff
