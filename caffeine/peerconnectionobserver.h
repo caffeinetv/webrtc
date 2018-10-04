@@ -12,12 +12,23 @@
 
 #include "api/peerconnectioninterface.h"
 
+#include <future>
+
 namespace caff {
+
+struct IceCandidateInfo {
+  std::string const sdp;
+  std::string const sdp_mid;
+  int const sdp_mline_index;
+};
 
 class PeerConnectionObserver : public webrtc::PeerConnectionObserver {
   RTC_DISALLOW_COPY_AND_ASSIGN(PeerConnectionObserver);
+
  public:
   PeerConnectionObserver();
+
+  std::future<std::vector<IceCandidateInfo>> GetFuture();
 
   void OnSignalingChange(
       webrtc::PeerConnectionInterface::SignalingState new_state) override;
@@ -33,6 +44,10 @@ class PeerConnectionObserver : public webrtc::PeerConnectionObserver {
   void OnIceGatheringChange(
       webrtc::PeerConnectionInterface::IceGatheringState new_state) override;
   void OnIceCandidate(webrtc::IceCandidateInterface const* candidate) override;
+
+ private:
+  std::promise<std::vector<IceCandidateInfo>> promise;
+  std::vector<IceCandidateInfo> gatheredCandidates;
 };
 
 }  // namespace caff
