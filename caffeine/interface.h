@@ -35,6 +35,7 @@ class Interface {
   virtual ~Interface();
 
   Broadcast* StartBroadcast(
+      std::function<std::string(std::string const&)> offerGeneratedCallback,
       std::function<void(std::vector<caff_ice_info> const&)>
           iceGatheredCallback,
       std::function<void()> startedCallback,

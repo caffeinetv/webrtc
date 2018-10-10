@@ -49,6 +49,11 @@ typedef struct {
 typedef caff_ice_info const caff_ice_candidates[];
 
 /* Callback types for starting broadcast */
+
+/* TODO: caff_offer_generated will be void and have to call, e.g.,
+ * caff_sdp_answer or something
+ */
+typedef char const* (*caff_offer_generated)(char const* offer);
 typedef void (*caff_ice_gathered)(void* user_data,
                                   caff_ice_candidates candidates,
                                   size_t num_candidates);
@@ -94,6 +99,7 @@ caff_interface_handle caff_initialize(caff_log_callback log_callback,
 caff_broadcast_handle caff_start_broadcast(
     caff_interface_handle interface_handle,
     void* user_data,
+    caff_offer_generated offer_generated_callback,
     caff_ice_gathered ice_gathered_callback,
     caff_broadcast_started started_callback,
     caff_broadcast_failed failed_callback);

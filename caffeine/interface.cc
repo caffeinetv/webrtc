@@ -58,6 +58,7 @@ namespace caff {
   }
 
   Broadcast* Interface::StartBroadcast(
+      std::function<std::string(std::string const&)> offerGeneratedCallback,
       std::function<void(std::vector<caff_ice_info> const&)>
           iceGatheredCallback,
       std::function<void()> startedCallback,
@@ -135,7 +136,8 @@ namespace caff {
       return nullptr;
     }
 
-    std::string answerSdp;
+	/* TODO: this is probably the first point where async will split off */
+    std::string answerSdp = offerGeneratedCallback(offerSdp);
 
     webrtc::SdpParseError answerError;
     auto remoteDesc = webrtc::CreateSessionDescription(webrtc::SdpType::kAnswer,
