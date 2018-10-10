@@ -11,10 +11,10 @@
 #ifndef CAFFEINE_RTC_CAFFEINE_H
 #define CAFFEINE_RTC_CAFFEINE_H
 
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
-#else
-#include <stdbool.h>
 #endif
 
 /* Log severities mapped from WebRTC library */
@@ -39,8 +39,19 @@ typedef enum {
 typedef void (*caff_log_callback)(caff_log_severity severity,
                                   char const* message);
 
+/* Struct for ICE offers/answers */
+typedef struct {
+  char const* sdp;
+  char const* sdp_mid;
+  int sdp_mline_index;
+} caff_ice_info;
+
+typedef caff_ice_info const caff_ice_candidates[];
 
 /* Callback types for starting broadcast */
+typedef void (*caff_ice_gathered)(void* user_data,
+                                  caff_ice_candidates candidates,
+                                  size_t num_candidates);
 typedef void (*caff_broadcast_started)(void* user_data);
 typedef void (*caff_broadcast_failed)(void* user_data, caff_error error);
 
@@ -83,6 +94,7 @@ caff_interface_handle caff_initialize(caff_log_callback log_callback,
 caff_broadcast_handle caff_start_broadcast(
     caff_interface_handle interface_handle,
     void* user_data,
+    caff_ice_gathered ice_gathered_callback,
     caff_broadcast_started started_callback,
     caff_broadcast_failed failed_callback);
 

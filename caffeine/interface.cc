@@ -58,6 +58,8 @@ namespace caff {
   }
 
   Broadcast* Interface::StartBroadcast(
+      std::function<void(std::vector<caff_ice_info> const&)>
+          iceGatheredCallback,
       std::function<void()> startedCallback,
       std::function<void(caff_error)> failedCallback) {
     webrtc::PeerConnectionInterface::IceServer server;
@@ -66,7 +68,7 @@ namespace caff {
     webrtc::PeerConnectionInterface::RTCConfiguration config;
     config.servers.push_back(server);
 
-    auto observer = new PeerConnectionObserver();
+    auto observer = new PeerConnectionObserver(iceGatheredCallback);
 
     auto peerConnection = factory->CreatePeerConnection(
         config, webrtc::PeerConnectionDependencies(observer));

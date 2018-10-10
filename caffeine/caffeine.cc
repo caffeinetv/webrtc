@@ -10,6 +10,8 @@
 
 #include "caffeine.h"
 
+#include <vector>
+
 #include "broadcast.h"
 #include "interface.h"
 #include "logsink.h"
@@ -65,20 +67,28 @@ caff_interface_handle caff_initialize(caff_log_callback log_callback,
 caff_broadcast_handle caff_start_broadcast(
     caff_interface_handle interface_handle,
     void* user_data,
+	caff_ice_gathered ice_gathered_callback,
     caff_broadcast_started started_callback,
     caff_broadcast_failed failed_callback) {
   RTC_DCHECK(interface_handle);
   RTC_DCHECK(started_callback);
   RTC_DCHECK(failed_callback);
 
-  // Encapsulate void * inside lambdas
+  // Encapsulate void * inside lambdas, and other C++ -> C translations
+  auto iceGatheredCallback =
+      [=](std::vector<caff_ice_info> const& candidatesVector) {
+        auto candidates =
+            reinterpret_cast<caff_ice_info const*>(&candidatesVector[0]);
+        ice_gathered_callback(user_data, candidates, candidatesVector.size());
+      };
   auto startedCallback = [=] { started_callback(user_data); };
   auto failedCallback = [=](caff_error error) {
     failed_callback(user_data, error);
   };
 
   auto interface = reinterpret_cast<Interface*>(interface_handle);
-  auto broadcast = interface->StartBroadcast(startedCallback, failedCallback);
+  auto broadcast = interface->StartBroadcast(iceGatheredCallback,
+                                             startedCallback, failedCallback);
   return reinterpret_cast<caff_broadcast_handle>(broadcast);
 }
 

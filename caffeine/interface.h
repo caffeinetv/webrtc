@@ -13,6 +13,7 @@
 #include "caffeine.h"
 
 #include <functional>
+#include <vector>
 
 #include "rtc_base/scoped_ref_ptr.h"
 
@@ -33,8 +34,11 @@ class Interface {
 
   virtual ~Interface();
 
-  Broadcast* StartBroadcast(std::function<void()> startedCallback,
-                            std::function<void(caff_error)> failedCallback);
+  Broadcast* StartBroadcast(
+      std::function<void(std::vector<caff_ice_info> const&)>
+          iceGatheredCallback,
+      std::function<void()> startedCallback,
+      std::function<void(caff_error)> failedCallback);
 
  private:
   rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory;
@@ -43,4 +47,4 @@ class Interface {
   std::unique_ptr<rtc::Thread> signalingThread;
 };
 
-}
+}  // namespace caff
