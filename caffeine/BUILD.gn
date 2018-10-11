@@ -11,16 +11,6 @@ group("caffeine") {
 
 rtc_shared_library("caffeine-rtc") {
   sources = [
-    "caffeine.def",
-  ]
-
-  deps = [
-    ":caffeine-rtc-static",
-  ]
-}
-
-rtc_static_library("caffeine-rtc-static") {
-  sources = [
     "audiodevicedefaultimpl.h",
     "broadcast.cc",
     "broadcast.h",

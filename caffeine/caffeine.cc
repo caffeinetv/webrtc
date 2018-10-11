@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#define CAFFEINE_RTC_LIBRARY
+
 #include "caffeine.h"
 
 #include <vector>
@@ -26,6 +28,7 @@ namespace caff {
 
 extern "C" {
 
+CAFFEINE_API
 caff_interface_handle caff_initialize(caff_log_callback log_callback,
                                       caff_log_severity min_severity) {
   RTC_DCHECK(log_callback);
@@ -64,6 +67,7 @@ caff_interface_handle caff_initialize(caff_log_callback log_callback,
   return reinterpret_cast<caff_interface_handle>(interface);
 }
 
+CAFFEINE_API
 caff_broadcast_handle caff_start_broadcast(
     caff_interface_handle interface_handle,
     void* user_data,
@@ -100,6 +104,7 @@ caff_broadcast_handle caff_start_broadcast(
   return reinterpret_cast<caff_broadcast_handle>(broadcast);
 }
 
+CAFFEINE_API
 void caff_end_broadcast(caff_broadcast_handle broadcast_handle) {
   RTC_DCHECK(broadcast_handle);
   auto broadcast = reinterpret_cast<Broadcast*>(broadcast_handle);
@@ -108,6 +113,7 @@ void caff_end_broadcast(caff_broadcast_handle broadcast_handle) {
   RTC_LOG(LS_INFO) << "Caffeine broadcast ended";
 }
 
+CAFFEINE_API
 void caff_deinitialize(caff_interface_handle interface_handle) {
   RTC_DCHECK(interface_handle);
   auto interface = reinterpret_cast<Interface*>(interface_handle);

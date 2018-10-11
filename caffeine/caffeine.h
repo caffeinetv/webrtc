@@ -14,6 +14,18 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#if defined(CAFFEINE_RTC_LIBRARY)
+#  if defined(_WIN32)
+#    define CAFFEINE_API __declspec(dllexport)
+#  else
+#    define CAFFEINE_API __attribute__((visibility("default")))
+#  endif
+#elif defined(_WIN32)
+#  define CAFFEINE_API __declspec(dllimport)
+#else
+#  define CAFFEINE_API
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -78,6 +90,7 @@ typedef struct caff_broadcast * caff_broadcast_handle;
  * Returns a handle to the caffeine management object to be passed into other
  * functions. If there is an error during initialization this will be NULL
  */
+CAFFEINE_API
 caff_interface_handle caff_initialize(caff_log_callback log_callback,
                                       caff_log_severity min_severity);
 
@@ -97,6 +110,7 @@ caff_interface_handle caff_initialize(caff_log_callback log_callback,
  * the asynchronous operation, the handle will be NULL and the
  * failed_callback will NOT be called
  */
+CAFFEINE_API
 caff_broadcast_handle caff_start_broadcast(
     caff_interface_handle interface_handle,
     void* user_data,
@@ -120,6 +134,7 @@ caff_broadcast_handle caff_start_broadcast(
  * broadcast_handle: the broadcast handle received from caff_start_broadcast.
  *     This handle will no longer be valid after the function returns.
  */
+CAFFEINE_API
 void caff_end_broadcast(caff_broadcast_handle broadcast_handle);
 
 
@@ -130,6 +145,7 @@ void caff_end_broadcast(caff_broadcast_handle broadcast_handle);
  * interface_handle: the interface handle received from caff_initialize. This
  *     handle will no longer be valid after the function returns.
  */
+CAFFEINE_API
 void caff_deinitialize(caff_interface_handle interface_handle);
 
 #ifdef __cplusplus
