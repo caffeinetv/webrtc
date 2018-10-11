@@ -12,6 +12,7 @@
 #define CAFFEINE_RTC_CAFFEINE_H
 
 #include <stdbool.h>
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {

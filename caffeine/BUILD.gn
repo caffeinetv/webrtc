@@ -9,7 +9,6 @@ group("caffeine") {
   ]
 }
 
-# TODO mac & linux
 rtc_shared_library("caffeine-rtc") {
   sources = [
     "caffeine.def",
@@ -18,8 +17,6 @@ rtc_shared_library("caffeine-rtc") {
   deps = [
     ":caffeine-rtc-static",
   ]
-
-  output_extension = "dll"
 }
 
 rtc_static_library("caffeine-rtc-static") {
