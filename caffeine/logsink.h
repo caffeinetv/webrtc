@@ -44,11 +44,11 @@ class LogSink : public rtc::LogSink {
  public:
   LogSink(caff_log_callback cb) : callback(cb) {}
 
-  void OnLogMessage(const std::string& message,
-                    rtc::LoggingSeverity severity,
-                    const char* tag) override;
+  virtual void OnLogMessage(const std::string& message,
+                            rtc::LoggingSeverity severity,
+                            const char* tag) override;
 
-  void OnLogMessage(const std::string& message) override;
+  virtual void OnLogMessage(const std::string& message) override;
 
  private:
   caff_log_callback callback;

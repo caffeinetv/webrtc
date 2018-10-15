@@ -25,20 +25,21 @@ class PeerConnectionObserver : public webrtc::PeerConnectionObserver {
   PeerConnectionObserver(std::function<void(std::vector<caff_ice_info> const&)>
                              iceGatheredCallback);
 
-  void OnSignalingChange(
+  virtual void OnSignalingChange(
       webrtc::PeerConnectionInterface::SignalingState new_state) override;
-  void OnRenegotiationNeeded() override;
-  void OnIceConnectionChange(
+  virtual void OnRenegotiationNeeded() override;
+  virtual void OnIceConnectionChange(
       webrtc::PeerConnectionInterface::IceConnectionState new_state) override;
-  void OnAddStream(
+  virtual void OnAddStream(
       rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override;
-  void OnRemoveStream(
+  virtual void OnRemoveStream(
       rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override;
-  void OnDataChannel(
+  virtual void OnDataChannel(
       rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel) override;
-  void OnIceGatheringChange(
+  virtual void OnIceGatheringChange(
       webrtc::PeerConnectionInterface::IceGatheringState new_state) override;
-  void OnIceCandidate(webrtc::IceCandidateInterface const* candidate) override;
+  virtual void OnIceCandidate(
+      webrtc::IceCandidateInterface const* candidate) override;
 
  private:
   std::function<void(std::vector<caff_ice_info> const&)> iceGatheredCallback;

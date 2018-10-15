@@ -22,8 +22,8 @@ class CreateSessionDescriptionObserver
  public:
   std::future<std::unique_ptr<webrtc::SessionDescriptionInterface>> GetFuture();
 
-  void OnSuccess(webrtc::SessionDescriptionInterface* desc) override;
-  void OnFailure(std::string const& error) override;
+  virtual void OnSuccess(webrtc::SessionDescriptionInterface* desc) override;
+  virtual void OnFailure(std::string const& error) override;
 
  private:
   std::promise<std::unique_ptr<webrtc::SessionDescriptionInterface>> promise;
@@ -34,8 +34,8 @@ class SetSessionDescriptionObserver
  public:
   std::future<bool> GetFuture();
 
-  void OnSuccess() override;
-  void OnFailure(std::string const& error) override;
+  virtual void OnSuccess() override;
+  virtual void OnFailure(std::string const& error) override;
 
  private:
   std::promise<bool> promise;
