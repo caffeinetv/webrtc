@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "caffeine.h"
+#include "iceinfo.h"
 
 #include "api/peerconnectioninterface.h"
 
@@ -22,8 +22,10 @@ class PeerConnectionObserver : public webrtc::PeerConnectionObserver {
   RTC_DISALLOW_COPY_AND_ASSIGN(PeerConnectionObserver);
 
  public:
-  PeerConnectionObserver(std::function<void(std::vector<caff_ice_info> const&)>
-                             iceGatheredCallback);
+  PeerConnectionObserver();
+
+  using Candidates = std::vector<IceInfo>;
+  std::future<Candidates const&> GetFuture();
 
   virtual void OnSignalingChange(
       webrtc::PeerConnectionInterface::SignalingState new_state) override;
@@ -42,10 +44,8 @@ class PeerConnectionObserver : public webrtc::PeerConnectionObserver {
       webrtc::IceCandidateInterface const* candidate) override;
 
  private:
-  std::function<void(std::vector<caff_ice_info> const&)> iceGatheredCallback;
-
-  std::vector<std::string> stringHolders;
-  std::vector<caff_ice_info> gatheredCandidates;
+  std::promise<Candidates const&> promise;
+  Candidates gatheredCandidates;
 };
 
 }  // namespace caff

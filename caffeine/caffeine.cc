@@ -17,6 +17,7 @@
 #include "broadcast.h"
 #include "interface.h"
 #include "logsink.h"
+#include "iceinfo.h"
 
 #include "rtc_base/ssladapter.h"
 
@@ -81,14 +82,18 @@ caff_broadcast_handle caff_start_broadcast(
 
   // Encapsulate void * inside lambdas, and other C++ -> C translations
   auto offerGeneratedCallback = [=](std::string const& offer) {
-    return std::string(offer_generated_callback(offer.c_str()));
+    auto answer = offer_generated_callback(user_data, offer.c_str());
+    return answer ? std::string(answer) : std::string();
   };
 
   auto iceGatheredCallback =
-      [=](std::vector<caff_ice_info> const& candidatesVector) {
+      [=](std::vector<IceInfo> const& candidatesVector) {
+        std::vector<caff_ice_info> c_candidatesVector{candidatesVector.begin(),
+                                                      candidatesVector.end()};
         auto candidates =
-            reinterpret_cast<caff_ice_info const*>(&candidatesVector[0]);
-        ice_gathered_callback(user_data, candidates, candidatesVector.size());
+            reinterpret_cast<caff_ice_info const*>(&c_candidatesVector[0]);
+        return ice_gathered_callback(user_data, candidates,
+                                     c_candidatesVector.size());
       };
 
   auto startedCallback = [=] { started_callback(user_data); };

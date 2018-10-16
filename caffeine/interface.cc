@@ -59,7 +59,7 @@ namespace caff {
 
   Broadcast* Interface::StartBroadcast(
       std::function<std::string(std::string const&)> offerGeneratedCallback,
-      std::function<void(std::vector<caff_ice_info> const&)>
+      std::function<bool(std::vector<IceInfo> const&)>
           iceGatheredCallback,
       std::function<void()> startedCallback,
       std::function<void(caff_error)> failedCallback) {
@@ -69,7 +69,7 @@ namespace caff {
     webrtc::PeerConnectionInterface::RTCConfiguration config;
     config.servers.push_back(server);
 
-    auto observer = new PeerConnectionObserver(iceGatheredCallback);
+    auto observer = new PeerConnectionObserver;
 
     auto peerConnection = factory->CreatePeerConnection(
         config, webrtc::PeerConnectionDependencies(observer));
@@ -90,6 +90,8 @@ namespace caff {
         new rtc::RefCountedObject<CreateSessionDescriptionObserver>;
 
     webrtc::PeerConnectionInterface::RTCOfferAnswerOptions options;
+
+    peerConnection->AddStream(stream);
 
     // TODO: do this stuff asynchronously
     peerConnection->CreateOffer(createObserver, options);
@@ -112,11 +114,6 @@ namespace caff {
       return nullptr;
     }
 
-    // TODO: signaling
-
-    // Send offer to CDN
-    // build sdp answers
-
     webrtc::SdpParseError offerError;
     auto localDesc = webrtc::CreateSessionDescription(webrtc::SdpType::kOffer,
                                                       offerSdp, &offerError);
@@ -137,6 +134,9 @@ namespace caff {
     }
 
 	/* TODO: this is probably the first point where async will split off */
+
+	// offerGenerated must be called before iceGathered so that a signed_payload
+	// is available
     std::string answerSdp = offerGeneratedCallback(offerSdp);
 
     webrtc::SdpParseError answerError;
@@ -147,6 +147,11 @@ namespace caff {
                         << answerError.description;
       return nullptr;
     }
+
+    if (!iceGatheredCallback(observer->GetFuture().get())) {
+      RTC_LOG(LS_ERROR) << "Failed to negotiate ICE";
+      return nullptr;
+	}
 
     rtc::scoped_refptr<SetSessionDescriptionObserver> setRemoteObserver =
         new rtc::RefCountedObject<SetSessionDescriptionObserver>;

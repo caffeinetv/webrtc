@@ -63,11 +63,10 @@ typedef caff_ice_info const caff_ice_candidates[];
 
 /* Callback types for starting broadcast */
 
-/* TODO: caff_offer_generated will be void and have to call, e.g.,
- * caff_sdp_answer or something
+/* TODO: Move SDP & ICE stuff under the hood
  */
-typedef char const* (*caff_offer_generated)(char const* offer);
-typedef void (*caff_ice_gathered)(void* user_data,
+typedef char const* (*caff_offer_generated)(void* user_data, char const* offer);
+typedef bool (*caff_ice_gathered)(void* user_data,
                                   caff_ice_candidates candidates,
                                   size_t num_candidates);
 typedef void (*caff_broadcast_started)(void* user_data);

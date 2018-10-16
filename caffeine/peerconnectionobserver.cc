@@ -12,10 +12,12 @@
 
 namespace caff {
 
-PeerConnectionObserver::PeerConnectionObserver(
-    std::function<void(std::vector<caff_ice_info> const&)>
-        iceGatheredCallback)
-    : iceGatheredCallback(iceGatheredCallback) {}
+PeerConnectionObserver::PeerConnectionObserver() {}
+
+std::future<PeerConnectionObserver::Candidates const&>
+PeerConnectionObserver::GetFuture() {
+  return promise.get_future();
+}
 
 void PeerConnectionObserver::OnSignalingChange(
     webrtc::PeerConnectionInterface::SignalingState new_state) {}
@@ -46,7 +48,7 @@ void PeerConnectionObserver::OnIceGatheringChange(
       break;
     case State::kIceGatheringComplete:
       RTC_LOG(LS_INFO) << "ICE gathering: complete";
-      iceGatheredCallback(gatheredCandidates);
+      promise.set_value(gatheredCandidates);
       break;
     default:
       RTC_LOG(LS_WARNING) << "ICE gathering: unrecognized state [" << new_state
@@ -59,19 +61,14 @@ void PeerConnectionObserver::OnIceCandidate(
     webrtc::IceCandidateInterface const* candidate) {
   RTC_DCHECK(candidate);
 
-  stringHolders.emplace_back();
-  auto & sdpString = stringHolders.back();
+  std::string sdpString;
   if (!candidate->ToString(&sdpString)) {
     RTC_LOG(LS_ERROR) << "Failed parsing ICE candidate";
-    stringHolders.pop_back();
     return;
   }
 
-  stringHolders.emplace_back(candidate->sdp_mid());
-  auto& sdpMidString = stringHolders.back();
-
-  gatheredCandidates.push_back(
-      {sdpString.c_str(), sdpMidString.c_str(), candidate->sdp_mline_index()});
+  gatheredCandidates.emplace_back(std::move(sdpString), candidate->sdp_mid(),
+                                  candidate->sdp_mline_index());
   RTC_LOG(LS_INFO) << "ICE candidate added";
 }
 

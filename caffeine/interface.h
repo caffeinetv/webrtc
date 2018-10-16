@@ -11,6 +11,7 @@
 #pragma once
 
 #include "caffeine.h"
+#include "iceinfo.h"
 
 #include <functional>
 #include <vector>
@@ -36,7 +37,7 @@ class Interface {
 
   Broadcast* StartBroadcast(
       std::function<std::string(std::string const&)> offerGeneratedCallback,
-      std::function<void(std::vector<caff_ice_info> const&)>
+      std::function<bool(std::vector<IceInfo> const&)>
           iceGatheredCallback,
       std::function<void()> startedCallback,
       std::function<void(caff_error)> failedCallback);
