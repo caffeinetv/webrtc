@@ -9,15 +9,20 @@
  */
 
 #include "broadcast.h"
+#include "broadcastaudiodevice.h"
 
 #include "api/mediastreaminterface.h"
 
 namespace caff {
 
-Broadcast::Broadcast(
-    rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
-    : stream(stream) {}
+Broadcast::Broadcast(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream,
+                     rtc::scoped_refptr<BroadcastAudioDevice> audioDevice)
+    : stream(stream), audioDevice(audioDevice) {}
 
 Broadcast::~Broadcast() {}
+
+void Broadcast::SendAudio(uint8_t* samples, size_t samples_per_channel) {
+  audioDevice->SendAudio(samples, samples_per_channel);
+}
 
 }  // namespace caff

@@ -17,14 +17,20 @@ class MediaStreamInterface;
 }
 
 namespace caff {
+class BroadcastAudioDevice;
 
+// TODO: maybe don't need this layer of indirection
 class Broadcast {
  public:
-  Broadcast(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream);
+  Broadcast(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream,
+            rtc::scoped_refptr<BroadcastAudioDevice> audioDevice);
   virtual ~Broadcast();
+
+  void SendAudio(uint8_t* samples, size_t samples_per_channel);
 
  private:
   rtc::scoped_refptr<webrtc::MediaStreamInterface> stream;
+  rtc::scoped_refptr<BroadcastAudioDevice> audioDevice;
 };
 
 }  // namespace caff

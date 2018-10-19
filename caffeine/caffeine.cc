@@ -77,6 +77,8 @@ caff_broadcast_handle caff_start_broadcast(
     caff_broadcast_started started_callback,
     caff_broadcast_failed failed_callback) {
   RTC_DCHECK(interface_handle);
+  RTC_DCHECK(offer_generated_callback);
+  RTC_DCHECK(ice_gathered_callback);
   RTC_DCHECK(started_callback);
   RTC_DCHECK(failed_callback);
 
@@ -107,6 +109,17 @@ caff_broadcast_handle caff_start_broadcast(
                                 startedCallback, failedCallback);
 
   return reinterpret_cast<caff_broadcast_handle>(broadcast);
+}
+
+CAFFEINE_API
+void caff_send_audio(caff_broadcast_handle broadcast_handle,
+                     uint8_t* samples,
+                     size_t samples_per_channel) {
+  RTC_DCHECK(broadcast_handle);
+  RTC_DCHECK(samples);
+  RTC_DCHECK(samples_per_channel);
+  auto broadcast = reinterpret_cast<Broadcast*>(broadcast_handle);
+  broadcast->SendAudio(samples, samples_per_channel);
 }
 
 CAFFEINE_API

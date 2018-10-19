@@ -12,27 +12,57 @@
 
 namespace caff {
 
-BroadcastAudioDevice::BroadcastAudioDevice() {}
+// TODO: make these dynamic and transcode?
+static size_t const channels = 2;
+static size_t const sampleRate = 48000;
+static size_t const sampleSize = 2;
+static size_t const chunkSamples = sampleRate / 100;
+static size_t const chunkSize = chunkSamples * sampleSize * channels;
+
+BroadcastAudioDevice::BroadcastAudioDevice() : buffer(chunkSize) {}
+
+void BroadcastAudioDevice::SendAudio(uint8_t* data, size_t samplesPerChannel) {
+  RTC_DCHECK(data);
+  RTC_DCHECK(samplesPerChannel);
+
+  size_t remainingData = samplesPerChannel * channels * sampleSize;
+  size_t remainingBuffer = buffer.size() - bufferIndex;
+  size_t toCopy = std::min(remainingData, remainingBuffer);
+
+  while (toCopy) {
+    memcpy(&buffer[bufferIndex], data, toCopy);
+    data += toCopy;
+    bufferIndex += toCopy;
+    remainingData -= toCopy;
+    remainingBuffer -= toCopy;
+    if (remainingBuffer == 0) {
+      uint32_t unused;
+      audioTransport->RecordedDataIsAvailable(&buffer[0], chunkSamples,
+                                              sampleSize * channels, channels,
+                                              sampleRate, 0, 0, 0, 0, unused);
+      bufferIndex = 0;
+      remainingBuffer = buffer.size();
+    }
+    toCopy = std::min(remainingData, remainingBuffer);
+  }
+}
 
 int32_t BroadcastAudioDevice::RegisterAudioCallback(
-    webrtc::AudioTransport* audioCallback) {
-  // TODO
-  return -1;
+    webrtc::AudioTransport* audioTransport) {
+  this->audioTransport = audioTransport;
+  return 0;
 }
 
 int32_t BroadcastAudioDevice::Init() {
-  // TODO
   return 0;
 }
 
 int32_t BroadcastAudioDevice::Terminate() {
-  // TODO
-  return -1;
+  return 0;
 }
 
 bool BroadcastAudioDevice::Initialized() const {
-  // TODO
-  return false;
+  return true;
 }
 
 int16_t BroadcastAudioDevice::RecordingDevices() {
@@ -40,38 +70,32 @@ int16_t BroadcastAudioDevice::RecordingDevices() {
 }
 
 int32_t BroadcastAudioDevice::InitRecording() {
-  // TODO
-  return -1;
+  return 0;
 }
 
 bool BroadcastAudioDevice::RecordingIsInitialized() const {
-  // TODO
-  return false;
+  return true;
 }
 
 int32_t BroadcastAudioDevice::StartRecording() {
-  // TODO
-  return -1;
+  return 0;
 }
 
 int32_t BroadcastAudioDevice::StopRecording() {
-  // TODO
-  return -1;
+  return 0;
 }
 
 bool BroadcastAudioDevice::Recording() const {
-  // TODO
-  return false;
+  return true;
 }
 
 int32_t BroadcastAudioDevice::SetStereoRecording(bool enable) {
-  // TODO
-  return -1;
+  return 0;
 }
 
 int32_t BroadcastAudioDevice::StereoRecording(bool* enabled) const {
-  // TODO
-  return -1;
+  *enabled = true;
+  return 0;
 }
 
 }  // namespace caff

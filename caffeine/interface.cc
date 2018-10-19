@@ -39,14 +39,12 @@ namespace caff {
     signalingThread->SetName("caffeine-signaling", nullptr);
     signalingThread->Start();
 
-    auto adm =
-        workerThread->Invoke<rtc::scoped_refptr<webrtc::AudioDeviceModule>>(
+    audioDevice =
+        workerThread->Invoke<rtc::scoped_refptr<BroadcastAudioDevice>>(
             RTC_FROM_HERE, [] { return new BroadcastAudioDevice(); });
 
-    adm->AddRef();
-
     factory = webrtc::CreatePeerConnectionFactory(
-        networkThread.get(), workerThread.get(), signalingThread.get(), adm,
+        networkThread.get(), workerThread.get(), signalingThread.get(), audioDevice,
         webrtc::CreateBuiltinAudioEncoderFactory(),
         webrtc::CreateBuiltinAudioDecoderFactory(),
         webrtc::CreateBuiltinVideoEncoderFactory(),
@@ -166,7 +164,7 @@ namespace caff {
 
     startedCallback();
 
-    return new Broadcast(stream);
+    return new Broadcast(stream, audioDevice);
   }
 
   }  // namespace caff

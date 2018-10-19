@@ -10,22 +10,17 @@
 
 #pragma once
 
-#include "api/refcountedbase.h"
-#include "modules/audio_device/include/audio_device.h"
+#include "modules/audio_device/audio_device_generic.h"
+#include "rtc_base/refcountedobject.h"
 
 namespace caff {
 
 // Contains default implementations of AudioDeviceModule methods that
 // are not supported by caffeine. This is mostly to make the actual impl
 // more readable and maintainable.
-class AudioDeviceDefaultImpl : public webrtc::AudioDeviceModule,
-                               public rtc::RefCountedBase {
+class AudioDeviceDefaultImpl
+    : public rtc::RefCountedObject<webrtc::AudioDeviceModule> {
  public:
-  virtual void AddRef() const override { rtc::RefCountedBase::AddRef(); }
-  virtual rtc::RefCountReleaseStatus Release() const override {
-    return rtc::RefCountedBase::Release();
-  }
-
   // Retrieve the currently utilized audio layer
   virtual int32_t ActiveAudioLayer(AudioLayer* audioLayer) const override {
     return -1;

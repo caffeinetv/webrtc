@@ -28,6 +28,7 @@ class Thread;
 
 namespace caff {
 class Broadcast;
+class BroadcastAudioDevice;
 
 class Interface {
  public:
@@ -43,6 +44,7 @@ class Interface {
       std::function<void(caff_error)> failedCallback);
 
  private:
+  rtc::scoped_refptr<BroadcastAudioDevice> audioDevice;
   rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory;
   std::unique_ptr<rtc::Thread> networkThread;
   std::unique_ptr<rtc::Thread> workerThread;
