@@ -20,7 +20,7 @@ class BroadcastAudioDevice : public AudioDeviceDefaultImpl {
  public:
   BroadcastAudioDevice();
 
-  void SendAudio(uint8_t* data, size_t samples_per_channel);
+  void SendAudio(uint8_t const* data, size_t samples_per_channel);
 
   virtual int32_t RegisterAudioCallback(
       webrtc::AudioTransport* audioTransport) override;

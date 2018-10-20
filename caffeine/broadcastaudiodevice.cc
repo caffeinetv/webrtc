@@ -21,7 +21,7 @@ static size_t const chunkSize = chunkSamples * sampleSize * channels;
 
 BroadcastAudioDevice::BroadcastAudioDevice() : buffer(chunkSize) {}
 
-void BroadcastAudioDevice::SendAudio(uint8_t* data, size_t samplesPerChannel) {
+void BroadcastAudioDevice::SendAudio(uint8_t const* data, size_t samplesPerChannel) {
   RTC_DCHECK(data);
   RTC_DCHECK(samplesPerChannel);
 

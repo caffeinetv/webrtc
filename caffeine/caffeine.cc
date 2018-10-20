@@ -123,6 +123,21 @@ void caff_send_audio(caff_broadcast_handle broadcast_handle,
 }
 
 CAFFEINE_API
+void caff_send_video(caff_broadcast_handle broadcast_handle,
+                     uint8_t const* frame_data,
+                     size_t frame_bytes,
+                     uint32_t width,
+                     uint32_t height) {
+  RTC_DCHECK(frame_data);
+  RTC_DCHECK(frame_bytes);
+  RTC_DCHECK(width);
+  RTC_DCHECK(height);
+
+  auto broadcast = reinterpret_cast<Broadcast*>(broadcast_handle);
+  broadcast->SendVideo(frame_data, frame_bytes, width, height);
+}
+
+CAFFEINE_API
 void caff_end_broadcast(caff_broadcast_handle broadcast_handle) {
   RTC_DCHECK(broadcast_handle);
   auto broadcast = reinterpret_cast<Broadcast*>(broadcast_handle);

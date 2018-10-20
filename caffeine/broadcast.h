@@ -14,23 +14,33 @@
 
 namespace webrtc {
 class MediaStreamInterface;
+class PeerConnectionInterface;
 }
 
 namespace caff {
 class BroadcastAudioDevice;
+class BroadcastVideoCapturer;
 
 // TODO: maybe don't need this layer of indirection
 class Broadcast {
  public:
   Broadcast(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream,
-            rtc::scoped_refptr<BroadcastAudioDevice> audioDevice);
+            rtc::scoped_refptr<webrtc::PeerConnectionInterface> peerConnection,
+            rtc::scoped_refptr<BroadcastAudioDevice> audioDevice,
+            rtc::scoped_refptr<BroadcastVideoCapturer> videoCapturer);
   virtual ~Broadcast();
 
-  void SendAudio(uint8_t* samples, size_t samples_per_channel);
+  void SendAudio(uint8_t const * samples, size_t samples_per_channel);
+  void SendVideo(uint8_t const* frameData,
+                 size_t frameBytes,
+                 uint32_t width,
+                 uint32_t height);
 
  private:
   rtc::scoped_refptr<webrtc::MediaStreamInterface> stream;
+  rtc::scoped_refptr<webrtc::PeerConnectionInterface> peerConnection;
   rtc::scoped_refptr<BroadcastAudioDevice> audioDevice;
+  rtc::scoped_refptr<BroadcastVideoCapturer> videoCapturer;
 };
 
 }  // namespace caff

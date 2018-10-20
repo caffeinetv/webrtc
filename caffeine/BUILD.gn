@@ -16,6 +16,8 @@ rtc_shared_library("caffeine-rtc") {
     "broadcast.h",
     "broadcastaudiodevice.cc",
     "broadcastaudiodevice.h",
+    "broadcastvideocapturer.cc",
+    "broadcastvideocapturer.h",
     "caffeine.cc",
     "caffeine.h",
     "iceinfo.h",

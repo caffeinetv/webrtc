@@ -117,17 +117,20 @@ caff_broadcast_handle caff_start_broadcast(
     caff_broadcast_started started_callback,
     caff_broadcast_failed failed_callback);
 
-/* TODO */
-/* caff_update_screenshot(caff_broadcast_handle, some_data...) */
-/* caff_update_broadcast(caff_broadcast_handle, some_data...) */
-/* caff_send_video(caff_broadcast_handle, some_data...) */
-/* caff_send_audio(caff_broadcast_handle, some_data...) */
-
 /* TODO pass format, channels, etc */
 CAFFEINE_API
 void caff_send_audio(caff_broadcast_handle broadcast_handle,
                      uint8_t* samples,
                      size_t samples_per_channel);
+
+
+/* todo pass pixel format */
+CAFFEINE_API
+void caff_send_video(caff_broadcast_handle broadcast_handle,
+                     uint8_t const* frame_data,
+                     size_t frame_bytes,
+                     uint32_t width,
+                     uint32_t height);
 
 /* End a Caffeine broadcast
  *

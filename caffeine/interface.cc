@@ -12,6 +12,7 @@
 
 #include "broadcast.h"
 #include "broadcastaudiodevice.h"
+#include "broadcastvideocapturer.h"
 #include "peerconnectionobserver.h"
 #include "sessiondescriptionobserver.h"
 
@@ -72,16 +73,16 @@ namespace caff {
     auto peerConnection = factory->CreatePeerConnection(
         config, webrtc::PeerConnectionDependencies(observer));
 
-    // TODO: video
-    //auto capturer = createvideocapturer
-    //auto videoSource = factory->CreateVideoSource(capturer);
-    //auto videoTrack = factory->CreateVideoTrack("external_video", videoSource);
+    auto videoCapturer =
+        rtc::scoped_refptr<BroadcastVideoCapturer>(new BroadcastVideoCapturer);
+    auto videoSource = factory->CreateVideoSource(videoCapturer);
+    auto videoTrack = factory->CreateVideoTrack("external_video", videoSource);
 
     auto audioSource = factory->CreateAudioSource(cricket::AudioOptions());
     auto audioTrack = factory->CreateAudioTrack("external_audio", audioSource);
 
     auto stream = factory->CreateLocalMediaStream("caffeine_stream");
-    //stream->AddTrack(videoTrack);
+    stream->AddTrack(videoTrack);
     stream->AddTrack(audioTrack);
 
     rtc::scoped_refptr<CreateSessionDescriptionObserver> createObserver =
@@ -164,7 +165,7 @@ namespace caff {
 
     startedCallback();
 
-    return new Broadcast(stream, audioDevice);
+    return new Broadcast(stream, peerConnection, audioDevice, videoCapturer);
   }
 
   }  // namespace caff
