@@ -42,10 +42,10 @@ caff_interface_handle caff_initialize(caff_log_callback log_callback,
     rtc::LogMessage::LogTimestamps(true);
 
     // Send logs only to our log sink. Not to stderr, windows debugger, etc
-    rtc::LogMessage::LogToDebug(rtc::LoggingSeverity::LS_NONE);
-    rtc::LogMessage::SetLogToStderr(false);
+    //rtc::LogMessage::LogToDebug(rtc::LoggingSeverity::LS_NONE);
+    //rtc::LogMessage::SetLogToStderr(false);
 
-    // TODO: Figure out why this log sink isn't working
+    // TODO: Figure out why this log sink isn't working and uncomment above two lines
     rtc::LogMessage::AddLogToStream(
         new LogSink(log_callback),
         static_cast<rtc::LoggingSeverity>(min_severity));
