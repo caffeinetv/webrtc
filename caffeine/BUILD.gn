@@ -11,13 +11,9 @@ group("caffeine") {
 
 rtc_shared_library("caffeine-rtc") {
   sources = [
+    "audiodevice.cc",
+    "audiodevice.h",
     "audiodevicedefaultimpl.h",
-    "broadcast.cc",
-    "broadcast.h",
-    "broadcastaudiodevice.cc",
-    "broadcastaudiodevice.h",
-    "broadcastvideocapturer.cc",
-    "broadcastvideocapturer.h",
     "caffeine.cc",
     "caffeine.h",
     "iceinfo.h",
@@ -29,6 +25,10 @@ rtc_shared_library("caffeine-rtc") {
     "peerconnectionobserver.h",
     "sessiondescriptionobserver.cc",
     "sessiondescriptionobserver.h",
+    "stream.cc",
+    "stream.h",
+    "videocapturer.cc",
+    "videocapturer.h",
   ]
 
   if (!build_with_chromium && is_clang) {

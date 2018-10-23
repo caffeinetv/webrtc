@@ -27,8 +27,8 @@ class Thread;
 }
 
 namespace caff {
-class Broadcast;
-class BroadcastAudioDevice;
+class Stream;
+class AudioDevice;
 
 class Interface {
  public:
@@ -36,15 +36,14 @@ class Interface {
 
   virtual ~Interface();
 
-  Broadcast* StartBroadcast(
+  Stream* StartStream(
       std::function<std::string(std::string const&)> offerGeneratedCallback,
-      std::function<bool(std::vector<IceInfo> const&)>
-          iceGatheredCallback,
+      std::function<bool(std::vector<IceInfo> const&)> iceGatheredCallback,
       std::function<void()> startedCallback,
       std::function<void(caff_error)> failedCallback);
 
  private:
-  rtc::scoped_refptr<BroadcastAudioDevice> audioDevice;
+  rtc::scoped_refptr<AudioDevice> audioDevice;
   rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory;
   std::unique_ptr<rtc::Thread> networkThread;
   std::unique_ptr<rtc::Thread> workerThread;

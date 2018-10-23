@@ -10,11 +10,11 @@
 
 #include "interface.h"
 
-#include "broadcast.h"
-#include "broadcastaudiodevice.h"
-#include "broadcastvideocapturer.h"
+#include "audiodevice.h"
 #include "peerconnectionobserver.h"
 #include "sessiondescriptionobserver.h"
+#include "stream.h"
+#include "videocapturer.h"
 
 #include "api/peerconnectioninterface.h"
 
@@ -41,8 +41,8 @@ namespace caff {
     signalingThread->Start();
 
     audioDevice =
-        workerThread->Invoke<rtc::scoped_refptr<BroadcastAudioDevice>>(
-            RTC_FROM_HERE, [] { return new BroadcastAudioDevice(); });
+        workerThread->Invoke<rtc::scoped_refptr<AudioDevice>>(
+            RTC_FROM_HERE, [] { return new AudioDevice(); });
 
     factory = webrtc::CreatePeerConnectionFactory(
         networkThread.get(), workerThread.get(), signalingThread.get(), audioDevice,
@@ -56,7 +56,7 @@ namespace caff {
     factory = nullptr;
   }
 
-  Broadcast* Interface::StartBroadcast(
+  Stream* Interface::StartBroadcast(
       std::function<std::string(std::string const&)> offerGeneratedCallback,
       std::function<bool(std::vector<IceInfo> const&)>
           iceGatheredCallback,
@@ -74,7 +74,7 @@ namespace caff {
         config, webrtc::PeerConnectionDependencies(observer));
 
     auto videoCapturer =
-        rtc::scoped_refptr<BroadcastVideoCapturer>(new BroadcastVideoCapturer);
+        rtc::scoped_refptr<VideoCapturer>(new VideoCapturer);
     auto videoSource = factory->CreateVideoSource(videoCapturer);
     auto videoTrack = factory->CreateVideoTrack("external_video", videoSource);
 
@@ -165,7 +165,7 @@ namespace caff {
 
     startedCallback();
 
-    return new Broadcast(stream, peerConnection, audioDevice, videoCapturer);
+    return new Stream(stream, peerConnection, audioDevice, videoCapturer);
   }
 
   }  // namespace caff

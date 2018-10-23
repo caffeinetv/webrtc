@@ -14,10 +14,10 @@
 
 #include <vector>
 
-#include "broadcast.h"
+#include "iceinfo.h"
 #include "interface.h"
 #include "logsink.h"
-#include "iceinfo.h"
+#include "stream.h"
 
 #include "rtc_base/ssladapter.h"
 
@@ -69,13 +69,13 @@ caff_interface_handle caff_initialize(caff_log_callback log_callback,
 }
 
 CAFFEINE_API
-caff_broadcast_handle caff_start_broadcast(
+caff_stream_handle caff_start_stream(
     caff_interface_handle interface_handle,
     void* user_data,
     caff_offer_generated offer_generated_callback,
-	caff_ice_gathered ice_gathered_callback,
-    caff_broadcast_started started_callback,
-    caff_broadcast_failed failed_callback) {
+    caff_ice_gathered ice_gathered_callback,
+    caff_stream_started started_callback,
+    caff_stream_failed failed_callback) {
   RTC_DCHECK(interface_handle);
   RTC_DCHECK(offer_generated_callback);
   RTC_DCHECK(ice_gathered_callback);
@@ -88,15 +88,14 @@ caff_broadcast_handle caff_start_broadcast(
     return answer ? std::string(answer) : std::string();
   };
 
-  auto iceGatheredCallback =
-      [=](std::vector<IceInfo> const& candidatesVector) {
-        std::vector<caff_ice_info> c_candidatesVector{candidatesVector.begin(),
-                                                      candidatesVector.end()};
-        auto candidates =
-            reinterpret_cast<caff_ice_info const*>(&c_candidatesVector[0]);
-        return ice_gathered_callback(user_data, candidates,
-                                     c_candidatesVector.size());
-      };
+  auto iceGatheredCallback = [=](std::vector<IceInfo> const& candidatesVector) {
+    std::vector<caff_ice_info> c_candidatesVector{candidatesVector.begin(),
+                                                  candidatesVector.end()};
+    auto candidates =
+        reinterpret_cast<caff_ice_info const*>(&c_candidatesVector[0]);
+    return ice_gathered_callback(user_data, candidates,
+                                 c_candidatesVector.size());
+  };
 
   auto startedCallback = [=] { started_callback(user_data); };
   auto failedCallback = [=](caff_error error) {
@@ -104,26 +103,26 @@ caff_broadcast_handle caff_start_broadcast(
   };
 
   auto interface = reinterpret_cast<Interface*>(interface_handle);
-  auto broadcast =
-      interface->StartBroadcast(offerGeneratedCallback, iceGatheredCallback,
-                                startedCallback, failedCallback);
+  auto stream =
+      interface->StartStream(offerGeneratedCallback, iceGatheredCallback,
+                             startedCallback, failedCallback);
 
-  return reinterpret_cast<caff_broadcast_handle>(broadcast);
+  return reinterpret_cast<caff_stream_handle>(stream);
 }
 
 CAFFEINE_API
-void caff_send_audio(caff_broadcast_handle broadcast_handle,
+void caff_send_audio(caff_stream_handle stream_handle,
                      uint8_t* samples,
                      size_t samples_per_channel) {
-  RTC_DCHECK(broadcast_handle);
+  RTC_DCHECK(stream_handle);
   RTC_DCHECK(samples);
   RTC_DCHECK(samples_per_channel);
-  auto broadcast = reinterpret_cast<Broadcast*>(broadcast_handle);
-  broadcast->SendAudio(samples, samples_per_channel);
+  auto stream = reinterpret_cast<Stream*>(stream_handle);
+  stream->SendAudio(samples, samples_per_channel);
 }
 
 CAFFEINE_API
-void caff_send_video(caff_broadcast_handle broadcast_handle,
+void caff_send_video(caff_stream_handle stream_handle,
                      uint8_t const* frame_data,
                      size_t frame_bytes,
                      uint32_t width,
@@ -133,17 +132,17 @@ void caff_send_video(caff_broadcast_handle broadcast_handle,
   RTC_DCHECK(width);
   RTC_DCHECK(height);
 
-  auto broadcast = reinterpret_cast<Broadcast*>(broadcast_handle);
-  broadcast->SendVideo(frame_data, frame_bytes, width, height);
+  auto stream = reinterpret_cast<Stream*>(stream_handle);
+  stream->SendVideo(frame_data, frame_bytes, width, height);
 }
 
 CAFFEINE_API
-void caff_end_broadcast(caff_broadcast_handle broadcast_handle) {
-  RTC_DCHECK(broadcast_handle);
-  auto broadcast = reinterpret_cast<Broadcast*>(broadcast_handle);
+void caff_end_stream(caff_stream_handle stream_handle) {
+  RTC_DCHECK(stream_handle);
+  auto stream = reinterpret_cast<Stream*>(stream_handle);
   // TODO
-  delete broadcast;
-  RTC_LOG(LS_INFO) << "Caffeine broadcast ended";
+  delete stream;
+  RTC_LOG(LS_INFO) << "Caffeine stream ended";
 }
 
 CAFFEINE_API

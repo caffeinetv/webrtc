@@ -17,8 +17,7 @@
 namespace {
 // Protect against changes in underlying enum
 
-constexpr bool isEnumEqual(caff_log_severity caff,
-                           rtc::LoggingSeverity rtc) {
+constexpr bool isEnumEqual(caff_log_severity caff, rtc::LoggingSeverity rtc) {
   return caff == static_cast<caff_log_severity>(rtc);
 }
 

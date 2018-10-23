@@ -60,7 +60,7 @@ typedef struct {
 
 typedef caff_ice_info const caff_ice_candidates[];
 
-/* Callback types for starting broadcast */
+/* Callback types for starting stream */
 
 /* TODO: Move SDP & ICE stuff under the hood
  */
@@ -68,15 +68,15 @@ typedef char const* (*caff_offer_generated)(void* user_data, char const* offer);
 typedef bool (*caff_ice_gathered)(void* user_data,
                                   caff_ice_candidates candidates,
                                   size_t num_candidates);
-typedef void (*caff_broadcast_started)(void* user_data);
-typedef void (*caff_broadcast_failed)(void* user_data, caff_error error);
+typedef void (*caff_stream_started)(void* user_data);
+typedef void (*caff_stream_failed)(void* user_data, caff_error error);
 
 /* Opaque handles to internal objects */
 struct caff_interface;
 typedef struct caff_interface* caff_interface_handle;
 
-struct caff_broadcast;
-typedef struct caff_broadcast* caff_broadcast_handle;
+struct caff_stream;
+typedef struct caff_stream* caff_stream_handle;
 
 /* Initialize the Caffeine library
  *
@@ -90,7 +90,7 @@ CAFFEINE_API
 caff_interface_handle caff_initialize(caff_log_callback log_callback,
                                       caff_log_severity min_severity);
 
-/* Start broadcast on Caffeine
+/* Start stream on Caffeine
  *
  * Sets up the WebRTC connection with Caffeine asynchronously. Calls
  * into started_callback or failed_callback with the result. This may
@@ -101,46 +101,45 @@ caff_interface_handle caff_initialize(caff_log_callback log_callback,
  *
  * interface_handle: handle to the caffeine interface from caff_initialize
  * user_data: an optional pointer passed blindly to the callbacks
- * started_callback: called when broadcast successfully starts
- * failed_callback: called when broadcast fails to start
+ * started_callback: called when stream successfully starts
+ * failed_callback: called when stream fails to start
  *
- * returns a handle to the broadcast. If an error occurs before starting
+ * returns a handle to the stream. If an error occurs before starting
  * the asynchronous operation, the handle will be NULL and the
  * failed_callback will NOT be called
  */
 CAFFEINE_API
-caff_broadcast_handle caff_start_broadcast(
+caff_stream_handle caff_start_stream(
     caff_interface_handle interface_handle,
     void* user_data,
     caff_offer_generated offer_generated_callback,
     caff_ice_gathered ice_gathered_callback,
-    caff_broadcast_started started_callback,
-    caff_broadcast_failed failed_callback);
+    caff_stream_started started_callback,
+    caff_stream_failed failed_callback);
 
 /* TODO pass format, channels, etc */
 CAFFEINE_API
-void caff_send_audio(caff_broadcast_handle broadcast_handle,
+void caff_send_audio(caff_stream_handle stream_handle,
                      uint8_t* samples,
                      size_t samples_per_channel);
 
-
 /* todo pass pixel format */
 CAFFEINE_API
-void caff_send_video(caff_broadcast_handle broadcast_handle,
+void caff_send_video(caff_stream_handle stream_handle,
                      uint8_t const* frame_data,
                      size_t frame_bytes,
                      uint32_t width,
                      uint32_t height);
 
-/* End a Caffeine broadcast
+/* End a Caffeine stream
  *
- * This signals the server to end the broadcast and closes the RTC connection.
+ * This signals the server to end the stream and closes the RTC connection.
  *
- * broadcast_handle: the broadcast handle received from caff_start_broadcast.
+ * stream_handle: the stream handle received from caff_start_stream.
  *     This handle will no longer be valid after the function returns.
  */
 CAFFEINE_API
-void caff_end_broadcast(caff_broadcast_handle broadcast_handle);
+void caff_end_stream(caff_stream_handle stream_handle);
 
 /* Deinitialize Caffeine library
  *

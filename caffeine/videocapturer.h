@@ -15,13 +15,12 @@
 
 namespace caff {
 
-class BroadcastVideoCapturer
-    : public rtc::RefCountedObject<cricket::VideoCapturer> {
-  RTC_DISALLOW_COPY_AND_ASSIGN(BroadcastVideoCapturer);
+class VideoCapturer : public rtc::RefCountedObject<cricket::VideoCapturer> {
+  RTC_DISALLOW_COPY_AND_ASSIGN(VideoCapturer);
 
  public:
-  BroadcastVideoCapturer() {}
-  virtual ~BroadcastVideoCapturer() {}
+  VideoCapturer() {}
+  virtual ~VideoCapturer() {}
 
   void SendVideo(uint8_t const* frame,
                  size_t frameBytes,

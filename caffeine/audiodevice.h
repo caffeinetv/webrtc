@@ -16,9 +16,9 @@
 
 namespace caff {
 
-class BroadcastAudioDevice : public AudioDeviceDefaultImpl {
+class AudioDevice : public AudioDeviceDefaultImpl {
  public:
-  BroadcastAudioDevice();
+  AudioDevice();
 
   void SendAudio(uint8_t const* data, size_t samples_per_channel);
 

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "broadcastaudiodevice.h"
+#include "audiodevice.h"
 
 namespace caff {
 
@@ -19,9 +19,9 @@ static size_t const sampleSize = 2;
 static size_t const chunkSamples = sampleRate / 100;
 static size_t const chunkSize = chunkSamples * sampleSize * channels;
 
-BroadcastAudioDevice::BroadcastAudioDevice() : buffer(chunkSize) {}
+AudioDevice::AudioDevice() : buffer(chunkSize) {}
 
-void BroadcastAudioDevice::SendAudio(uint8_t const* data, size_t samplesPerChannel) {
+void AudioDevice::SendAudio(uint8_t const* data, size_t samplesPerChannel) {
   RTC_DCHECK(data);
   RTC_DCHECK(samplesPerChannel);
 
@@ -47,53 +47,53 @@ void BroadcastAudioDevice::SendAudio(uint8_t const* data, size_t samplesPerChann
   }
 }
 
-int32_t BroadcastAudioDevice::RegisterAudioCallback(
+int32_t AudioDevice::RegisterAudioCallback(
     webrtc::AudioTransport* audioTransport) {
   this->audioTransport = audioTransport;
   return 0;
 }
 
-int32_t BroadcastAudioDevice::Init() {
+int32_t AudioDevice::Init() {
   return 0;
 }
 
-int32_t BroadcastAudioDevice::Terminate() {
+int32_t AudioDevice::Terminate() {
   return 0;
 }
 
-bool BroadcastAudioDevice::Initialized() const {
+bool AudioDevice::Initialized() const {
   return true;
 }
 
-int16_t BroadcastAudioDevice::RecordingDevices() {
+int16_t AudioDevice::RecordingDevices() {
   return 1;
 }
 
-int32_t BroadcastAudioDevice::InitRecording() {
+int32_t AudioDevice::InitRecording() {
   return 0;
 }
 
-bool BroadcastAudioDevice::RecordingIsInitialized() const {
+bool AudioDevice::RecordingIsInitialized() const {
   return true;
 }
 
-int32_t BroadcastAudioDevice::StartRecording() {
+int32_t AudioDevice::StartRecording() {
   return 0;
 }
 
-int32_t BroadcastAudioDevice::StopRecording() {
+int32_t AudioDevice::StopRecording() {
   return 0;
 }
 
-bool BroadcastAudioDevice::Recording() const {
+bool AudioDevice::Recording() const {
   return true;
 }
 
-int32_t BroadcastAudioDevice::SetStereoRecording(bool enable) {
+int32_t AudioDevice::SetStereoRecording(bool enable) {
   return 0;
 }
 
-int32_t BroadcastAudioDevice::StereoRecording(bool* enabled) const {
+int32_t AudioDevice::StereoRecording(bool* enabled) const {
   *enabled = true;
   return 0;
 }
