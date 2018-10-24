@@ -10,9 +10,16 @@
 
 #pragma once
 
+#include <atomic>
+#include <functional>
+#include <vector>
+
+#include "iceinfo.h"
+
 #include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
+class PeerConnectionFactoryInterface;
 class MediaStreamInterface;
 class PeerConnectionInterface;
 }  // namespace webrtc
@@ -21,14 +28,17 @@ namespace caff {
 class AudioDevice;
 class VideoCapturer;
 
-// TODO: maybe don't need this layer of indirection
 class Stream {
  public:
-  Stream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream,
-         rtc::scoped_refptr<webrtc::PeerConnectionInterface> peerConnection,
-         rtc::scoped_refptr<AudioDevice> audioDevice,
-         rtc::scoped_refptr<VideoCapturer> videoCapturer);
+  Stream(rtc::scoped_refptr<AudioDevice> audioDevice,
+         rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory);
   virtual ~Stream();
+
+  void Start(
+      std::function<std::string(std::string const&)> offerGeneratedCallback,
+      std::function<bool(std::vector<IceInfo> const&)> iceGatheredCallback,
+      std::function<void()> startedCallback,
+      std::function<void(caff_error)> failedCallback);
 
   void SendAudio(uint8_t const* samples, size_t samples_per_channel);
   void SendVideo(uint8_t const* frameData,
@@ -37,10 +47,11 @@ class Stream {
                  uint32_t height);
 
  private:
-  rtc::scoped_refptr<webrtc::MediaStreamInterface> stream;
-  rtc::scoped_refptr<webrtc::PeerConnectionInterface> peerConnection;
+  std::atomic_bool started{false};
+  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory;
   rtc::scoped_refptr<AudioDevice> audioDevice;
   rtc::scoped_refptr<VideoCapturer> videoCapturer;
+  rtc::scoped_refptr<webrtc::PeerConnectionInterface> peerConnection;
 };
 
 }  // namespace caff
