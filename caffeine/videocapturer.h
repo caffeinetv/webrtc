@@ -15,7 +15,7 @@
 
 namespace caff {
 
-class VideoCapturer : public rtc::RefCountedObject<cricket::VideoCapturer> {
+class VideoCapturer : public cricket::VideoCapturer {
   RTC_DISALLOW_COPY_AND_ASSIGN(VideoCapturer);
 
  public:

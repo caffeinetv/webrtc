@@ -30,8 +30,8 @@ class VideoCapturer;
 
 class Stream {
  public:
-  Stream(rtc::scoped_refptr<AudioDevice> audioDevice,
-         rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory);
+  Stream(AudioDevice* audioDevice,
+         webrtc::PeerConnectionFactoryInterface* factory);
   virtual ~Stream();
 
   void Start(
@@ -48,9 +48,9 @@ class Stream {
 
  private:
   std::atomic_bool started{false};
-  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory;
-  rtc::scoped_refptr<AudioDevice> audioDevice;
-  rtc::scoped_refptr<VideoCapturer> videoCapturer;
+  AudioDevice* audioDevice;
+  VideoCapturer* videoCapturer;
+  webrtc::PeerConnectionFactoryInterface* factory;
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> peerConnection;
 };
 

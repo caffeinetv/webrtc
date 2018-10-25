@@ -24,9 +24,10 @@
 namespace caff {
 
 Stream::Stream(
-    rtc::scoped_refptr<AudioDevice> audioDevice,
-    rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory)
-    : factory(factory), audioDevice(audioDevice) {}
+    AudioDevice *audioDevice,
+    webrtc::PeerConnectionFactoryInterface *factory)
+    : audioDevice(audioDevice),
+      factory(factory) {}
 
 Stream::~Stream() {}
 
@@ -42,7 +43,7 @@ void Stream::Start(
     webrtc::PeerConnectionInterface::RTCConfiguration config;
     config.servers.push_back(server);
 
-    videoCapturer = rtc::scoped_refptr<VideoCapturer>(new VideoCapturer);
+    videoCapturer = new VideoCapturer;
     auto videoSource = factory->CreateVideoSource(videoCapturer);
     auto videoTrack = factory->CreateVideoTrack("external_video", videoSource);
 
