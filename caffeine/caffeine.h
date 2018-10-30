@@ -46,7 +46,6 @@ typedef enum {
   CAFF_ERROR_SDP_OFFER,
   CAFF_ERROR_SDP_ANSWER,
   CAFF_ERROR_ICE_TRICKLE,
-  CAFF_ERROR_ICE_REMOTE,
   CAFF_ERROR_DISCONNECTED,
   CAFF_ERROR_UNKNOWN,
 } caff_error;
@@ -81,6 +80,17 @@ typedef struct caff_interface* caff_interface_handle;
 
 struct caff_stream;
 typedef struct caff_stream* caff_stream_handle;
+
+/* Get string representation of error enum
+ *
+ * TODO: localization support
+ *
+ * error: the error code
+ *
+ * Returns a string representing the given error or "Unknown" if out of range
+ */
+CAFFEINE_API
+char const* caff_error_string(caff_error error);
 
 /* Initialize the Caffeine library
  *

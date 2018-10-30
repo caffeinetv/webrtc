@@ -30,6 +30,23 @@ namespace caff {
 extern "C" {
 
 CAFFEINE_API
+char const* caff_error_string(caff_error error) {
+  switch (error) {
+    case CAFF_ERROR_SDP_OFFER:
+      return "Error making SDP offer";
+    case CAFF_ERROR_SDP_ANSWER:
+      return "Error reading SDP answer";
+    case CAFF_ERROR_ICE_TRICKLE:
+      return "Error during ICE negotiation";
+    case CAFF_ERROR_DISCONNECTED:
+      return "Disconnected from server";
+    case CAFF_ERROR_UNKNOWN:
+    default:
+      return "Unknown error";
+  }
+}
+
+CAFFEINE_API
 caff_interface_handle caff_initialize(caff_log_callback log_callback,
                                       caff_log_severity min_severity) {
   RTC_DCHECK(log_callback);

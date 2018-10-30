@@ -136,7 +136,7 @@ void Stream::Start(
     auto setRemoteSuccess = setRemoteObserver->GetFuture().get();
     if (!setRemoteSuccess) {
       // Logged by the observer
-      failedCallback(CAFF_ERROR_ICE_REMOTE);
+      failedCallback(CAFF_ERROR_SDP_ANSWER);
       return;
     }
 
