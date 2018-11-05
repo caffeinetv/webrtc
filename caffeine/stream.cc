@@ -47,7 +47,23 @@ void Stream::Start(
     auto videoSource = factory->CreateVideoSource(videoCapturer);
     auto videoTrack = factory->CreateVideoTrack("external_video", videoSource);
 
-    auto audioSource = factory->CreateAudioSource(cricket::AudioOptions());
+    cricket::AudioOptions audioOptions;
+    audioOptions.echo_cancellation = false;
+    audioOptions.auto_gain_control = false;
+    audioOptions.noise_suppression = false;
+    audioOptions.highpass_filter = false;
+    audioOptions.stereo_swapping = false;
+    audioOptions.typing_detection = false;
+    audioOptions.aecm_generate_comfort_noise = false;
+    audioOptions.experimental_agc = false;
+    audioOptions.extended_filter_aec = false;
+    audioOptions.delay_agnostic_aec = false;
+    audioOptions.experimental_ns = false;
+    audioOptions.intelligibility_enhancer = false;
+    audioOptions.residual_echo_detector = false;
+    audioOptions.tx_agc_limiter = false;
+
+    auto audioSource = factory->CreateAudioSource(audioOptions);
     auto audioTrack = factory->CreateAudioTrack("external_audio", audioSource);
 
     auto mediaStream = factory->CreateLocalMediaStream("caffeine_stream");
@@ -63,8 +79,8 @@ void Stream::Start(
 
     rtc::scoped_refptr<CreateSessionDescriptionObserver> creationObserver =
         new rtc::RefCountedObject<CreateSessionDescriptionObserver>;
-    webrtc::PeerConnectionInterface::RTCOfferAnswerOptions options;
-    peerConnection->CreateOffer(creationObserver, options);
+    webrtc::PeerConnectionInterface::RTCOfferAnswerOptions answerOptions;
+    peerConnection->CreateOffer(creationObserver, answerOptions);
 
     auto offer = creationObserver->GetFuture().get();
     if (!offer) {
