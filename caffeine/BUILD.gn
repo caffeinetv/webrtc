@@ -20,14 +20,26 @@ rtc_static_library("x264enc") {
     "x264/include",
   ]
 
-  # TODO: other platforms
-  lib_dirs = [
-    "x264/lib/win64",
-  ]
+  # TODO: linux, ios, android
+  if (is_win) {
+    platform = "win"
+  } else if (is_mac) {
+    platform = "mac"
+  }
 
-  libs = [
-    "libx264.lib",
-  ]
+  if (current_cpu == "x86") {
+    bits = "32"
+  } else {
+    bits = "64"
+  }
+
+  lib_dirs = ["x264/lib/" + platform + bits]
+
+  if (is_win) {
+    libs = ["libx264.lib"]
+  } else {
+    libs = ["x264"]
+  }
 
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).

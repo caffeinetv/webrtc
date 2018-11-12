@@ -52,7 +52,7 @@ class EncoderFactory : public webrtc::VideoEncoderFactory {
 
   virtual std::unique_ptr<webrtc::VideoEncoder> CreateVideoEncoder(
 	  const webrtc::SdpVideoFormat& format) override {
-    return std::make_unique<X264Encoder>(cricket::VideoCodec(format));
+    return rtc::MakeUnique<X264Encoder>(cricket::VideoCodec(format));
   }
 };
 
