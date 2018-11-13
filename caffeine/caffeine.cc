@@ -59,10 +59,11 @@ caff_interface_handle caff_initialize(caff_log_callback log_callback,
     rtc::LogMessage::LogTimestamps(true);
 
     // Send logs only to our log sink. Not to stderr, windows debugger, etc
-    //rtc::LogMessage::LogToDebug(rtc::LoggingSeverity::LS_NONE);
-    //rtc::LogMessage::SetLogToStderr(false);
+    // rtc::LogMessage::LogToDebug(rtc::LoggingSeverity::LS_NONE);
+    // rtc::LogMessage::SetLogToStderr(false);
 
-    // TODO: Figure out why this log sink isn't working and uncomment above two lines
+    // TODO: Figure out why this log sink isn't working and uncomment above two
+    // lines
     rtc::LogMessage::AddLogToStream(
         new LogSink(log_callback),
         static_cast<rtc::LoggingSeverity>(min_severity));
@@ -143,14 +144,16 @@ void caff_send_video(caff_stream_handle stream_handle,
                      uint8_t const* frame_data,
                      size_t frame_bytes,
                      uint32_t width,
-                     uint32_t height) {
+                     uint32_t height,
+                     caff_format format) {
   RTC_DCHECK(frame_data);
   RTC_DCHECK(frame_bytes);
   RTC_DCHECK(width);
   RTC_DCHECK(height);
+  RTC_DCHECK(format);
 
   auto stream = reinterpret_cast<Stream*>(stream_handle);
-  stream->SendVideo(frame_data, frame_bytes, width, height);
+  stream->SendVideo(frame_data, frame_bytes, width, height, format);
 }
 
 CAFFEINE_API

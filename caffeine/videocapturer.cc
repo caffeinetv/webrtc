@@ -67,14 +67,13 @@ cricket::CaptureState VideoCapturer::Start(cricket::VideoFormat const& format) {
 void VideoCapturer::SendVideo(uint8_t const* frameData,
                               size_t frameByteCount,
                               uint32_t width,
-                              uint32_t height) {
+                              uint32_t height,
+                              webrtc::VideoType format) {
   // TODO: scaling, check formats, etc
   rtc::scoped_refptr<webrtc::I420Buffer> buffer =
       webrtc::I420Buffer::Create(width, height);
 
-  webrtc::VideoType type = webrtc::VideoType::kNV12;
-
-  ConvertToI420(type, frameData, 0, 0, width, height, frameByteCount,
+  ConvertToI420(format, frameData, 0, 0, width, height, frameByteCount,
                 webrtc::kVideoRotation_0, buffer.get());
 
   webrtc::VideoFrame frame(buffer, webrtc::kVideoRotation_0, rtc::TimeMicros());

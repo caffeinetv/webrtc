@@ -23,11 +23,9 @@
 
 namespace caff {
 
-Stream::Stream(
-    AudioDevice *audioDevice,
-    webrtc::PeerConnectionFactoryInterface *factory)
-    : audioDevice(audioDevice),
-      factory(factory) {}
+Stream::Stream(AudioDevice* audioDevice,
+               webrtc::PeerConnectionFactoryInterface* factory)
+    : audioDevice(audioDevice), factory(factory) {}
 
 Stream::~Stream() {}
 
@@ -156,7 +154,7 @@ void Stream::Start(
       return;
     }
 
-	started.store(true);
+    started.store(true);
     startedCallback();
   });
 
@@ -171,9 +169,11 @@ void Stream::SendAudio(uint8_t const* samples, size_t samples_per_channel) {
 void Stream::SendVideo(uint8_t const* frameData,
                        size_t frameBytes,
                        uint32_t width,
-                       uint32_t height) {
+                       uint32_t height,
+                       caff_format format) {
   RTC_DCHECK(started);
-  videoCapturer->SendVideo(frameData, frameBytes, width, height);
+  videoCapturer->SendVideo(frameData, frameBytes, width, height,
+                           static_cast<webrtc::VideoType>(format));
 }
 
 }  // namespace caff

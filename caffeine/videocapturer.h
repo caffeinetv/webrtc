@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "common_types.h"
 #include "media/base/videocapturer.h"
 #include "rtc_base/refcountedobject.h"
 
@@ -25,7 +26,8 @@ class VideoCapturer : public cricket::VideoCapturer {
   void SendVideo(uint8_t const* frame,
                  size_t frameBytes,
                  uint32_t width,
-                 uint32_t height);
+                 uint32_t height,
+                 webrtc::VideoType format);
 
   virtual cricket::CaptureState Start(
       cricket::VideoFormat const& format) override;
