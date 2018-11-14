@@ -175,7 +175,7 @@ void caff_send_video(caff_stream_handle stream_handle,
  *     This handle will no longer be valid after the function returns.
  */
 CAFFEINE_API
-void caff_end_stream(caff_stream_handle stream_handle);
+void caff_end_stream(caff_stream_handle* stream_handle);
 
 /* Deinitialize Caffeine library
  *
@@ -185,7 +185,7 @@ void caff_end_stream(caff_stream_handle stream_handle);
  *     handle will no longer be valid after the function returns.
  */
 CAFFEINE_API
-void caff_deinitialize(caff_interface_handle interface_handle);
+void caff_deinitialize(caff_interface_handle* interface_handle);
 
 #ifdef __cplusplus
 }

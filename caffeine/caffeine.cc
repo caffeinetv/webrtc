@@ -157,19 +157,22 @@ void caff_send_video(caff_stream_handle stream_handle,
 }
 
 CAFFEINE_API
-void caff_end_stream(caff_stream_handle stream_handle) {
+void caff_end_stream(caff_stream_handle* stream_handle) {
   RTC_DCHECK(stream_handle);
-  auto stream = reinterpret_cast<Stream*>(stream_handle);
-  // TODO
+  RTC_DCHECK(*stream_handle);
+  auto stream = reinterpret_cast<Stream*>(*stream_handle);
   delete stream;
+  *stream_handle = nullptr;
   RTC_LOG(LS_INFO) << "Caffeine stream ended";
 }
 
 CAFFEINE_API
-void caff_deinitialize(caff_interface_handle interface_handle) {
+void caff_deinitialize(caff_interface_handle* interface_handle) {
   RTC_DCHECK(interface_handle);
-  auto interface = reinterpret_cast<Interface*>(interface_handle);
+  RTC_DCHECK(*interface_handle);
+  auto interface = reinterpret_cast<Interface*>(*interface_handle);
   delete interface;
+  *interface_handle = nullptr;
   RTC_LOG(LS_INFO) << "Caffeine RTC deinitialized";
 }
 
