@@ -76,6 +76,8 @@ class VideoCapturer;
 
 class Stream {
  public:
+  static int const kMaxBitrateBps = 2000000;
+
   Stream(AudioDevice* audioDevice,
          webrtc::PeerConnectionFactoryInterface* factory);
   virtual ~Stream();

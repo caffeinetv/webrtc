@@ -74,6 +74,9 @@ void Stream::Start(
         config, webrtc::PeerConnectionDependencies(observer));
 
     peerConnection->AddStream(mediaStream);
+    webrtc::BitrateSettings bitrateOptions;
+    bitrateOptions.max_bitrate_bps = kMaxBitrateBps;
+    peerConnection->SetBitrate(bitrateOptions);
 
     rtc::scoped_refptr<CreateSessionDescriptionObserver> creationObserver =
         new rtc::RefCountedObject<CreateSessionDescriptionObserver>;
