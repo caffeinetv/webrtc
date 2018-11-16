@@ -65,6 +65,8 @@ cricket::CaptureState VideoCapturer::Start(cricket::VideoFormat const& format) {
   return cricket::CS_STARTING;
 }
 
+static uint32_t const enforcedFrameHeight = 720;
+
 void VideoCapturer::SendVideo(uint8_t const* frameData,
                               size_t frameByteCount,
                               uint32_t width,
@@ -79,15 +81,25 @@ void VideoCapturer::SendVideo(uint8_t const* frameData,
   lastFrameMicros = now;
 
   // TODO: scaling, check formats, etc
-  rtc::scoped_refptr<webrtc::I420Buffer> buffer =
+  rtc::scoped_refptr<webrtc::I420Buffer> unscaledBuffer =
       webrtc::I420Buffer::Create(width, height);
 
   ConvertToI420(format, frameData, 0, 0, width, height, frameByteCount,
-                webrtc::kVideoRotation_0, buffer.get());
+                webrtc::kVideoRotation_0, unscaledBuffer.get());
 
-  webrtc::VideoFrame frame(buffer, webrtc::kVideoRotation_0, rtc::TimeMicros());
+  rtc::scoped_refptr<webrtc::I420Buffer> scaledBuffer = unscaledBuffer;
+  uint32_t scaledWidth = width;
+  uint32_t scaledHeight = enforcedFrameHeight;
+  if (height != enforcedFrameHeight) {
+    scaledWidth = width * enforcedFrameHeight / height;
+    scaledBuffer = webrtc::I420Buffer::Create(scaledWidth, scaledHeight);
+    scaledBuffer->ScaleFrom(*unscaledBuffer);
+  }
 
-  OnFrame(frame, width, height);
+  webrtc::VideoFrame frame(scaledBuffer, webrtc::kVideoRotation_0,
+                           rtc::TimeMicros());
+
+  OnFrame(frame, scaledWidth, scaledHeight);
 }
 
 void VideoCapturer::Stop() {}
