@@ -12,6 +12,7 @@
 
 #include "api/video/i420_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "rtc_base/logging.h"
 #include "libyuv.h"
 
 namespace caff {
@@ -69,6 +70,14 @@ void VideoCapturer::SendVideo(uint8_t const* frameData,
                               uint32_t width,
                               uint32_t height,
                               webrtc::VideoType format) {
+  auto const now = rtc::TimeMicros();
+  auto span = now - lastFrameMicros;
+  if (span < minFrameMicros) {
+    RTC_LOG(LS_INFO) << "Dropping frame";
+    return;
+  }
+  lastFrameMicros = now;
+
   // TODO: scaling, check formats, etc
   rtc::scoped_refptr<webrtc::I420Buffer> buffer =
       webrtc::I420Buffer::Create(width, height);

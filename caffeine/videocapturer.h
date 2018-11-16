@@ -35,6 +35,10 @@ class VideoCapturer : public cricket::VideoCapturer {
   virtual bool IsRunning() override;
   virtual bool IsScreencast() const override;
   bool GetPreferredFourccs(std::vector<uint32_t>* fourccs) override;
+
+ private:
+  static int64_t const minFrameMicros = 1000000 / 30; // Limit framerate to 30 fps
+  int64_t lastFrameMicros = 0;
 };
 
 }  // namespace caff
