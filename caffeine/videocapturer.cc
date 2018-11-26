@@ -67,6 +67,9 @@ cricket::CaptureState VideoCapturer::Start(cricket::VideoFormat const& format) {
 
 static uint32_t const enforcedFrameHeight = 720;
 
+// FPS limit is 30 (fudged a bit for variance)
+static int64_t const minFrameMicros = (1000000 / 32);
+
 void VideoCapturer::SendVideo(uint8_t const* frameData,
                               size_t frameByteCount,
                               uint32_t width,
