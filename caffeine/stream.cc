@@ -75,6 +75,7 @@ void Stream::Start(
 
     peerConnection->AddStream(mediaStream);
     webrtc::BitrateSettings bitrateOptions;
+    bitrateOptions.start_bitrate_bps = kMaxBitrateBps;
     bitrateOptions.max_bitrate_bps = kMaxBitrateBps;
     peerConnection->SetBitrate(bitrateOptions);
 
