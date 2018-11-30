@@ -65,7 +65,8 @@ cricket::CaptureState VideoCapturer::Start(cricket::VideoFormat const& format) {
   return cricket::CS_STARTING;
 }
 
-static uint32_t const enforcedFrameHeight = 720;
+static uint32_t const maxHeight = 720;
+static uint32_t const minDimension = 360;
 
 // FPS limit is 30 (fudged a bit for variance)
 static int64_t const minFrameMicros = (1000000 / 32);
@@ -83,7 +84,43 @@ void VideoCapturer::SendVideo(uint8_t const* frameData,
   }
   lastFrameMicros = now;
 
-  // TODO: scaling, check formats, etc
+  int32_t adapted_width = minDimension;
+  int32_t adapted_height = minDimension;
+  int32_t crop_width;
+  int32_t crop_height;
+  int32_t crop_x;
+  int32_t crop_y;
+  int64_t translated_camera_time;
+
+  if (!AdaptFrame(width, height, now, now,
+                  &adapted_width, &adapted_height, &crop_width, &crop_height,
+                  &crop_x, &crop_y, &translated_camera_time)) {
+    RTC_LOG(LS_INFO) << "Adapter dropped the frame.";
+    return;
+  }
+
+  // we will cap the minimum resolution to be 360 on the smaller of either width
+  // or height depending on the orientation.
+
+  if ((width >= height) && (adapted_height < minDimension)) {
+    adapted_width = width * minDimension / height;
+    adapted_height = minDimension;
+  } else if ((height > width) && (adapted_width < minDimension)) {
+    adapted_width = minDimension;
+    adapted_height = height * minDimension / width;
+  }
+
+  // And cap the maximum vertical resolution to be 720
+  if (adapted_height > maxHeight) {
+    adapted_width = adapted_width * maxHeight / adapted_height;
+    adapted_height = maxHeight;
+  }
+
+  // if the given input is a weird resolution that is an odd number, the adapted
+  // may be odd too, and we need to ensure that it is even.
+  adapted_width = (adapted_width + 1) & ~1;    // round up to even
+  adapted_height = (adapted_height + 1) & ~1;  // round up to even
+
   rtc::scoped_refptr<webrtc::I420Buffer> unscaledBuffer =
       webrtc::I420Buffer::Create(width, height);
 
@@ -91,18 +128,15 @@ void VideoCapturer::SendVideo(uint8_t const* frameData,
                 webrtc::kVideoRotation_0, unscaledBuffer.get());
 
   rtc::scoped_refptr<webrtc::I420Buffer> scaledBuffer = unscaledBuffer;
-  uint32_t scaledWidth = width;
-  uint32_t scaledHeight = enforcedFrameHeight;
-  if (height != enforcedFrameHeight) {
-    scaledWidth = width * enforcedFrameHeight / height;
-    scaledBuffer = webrtc::I420Buffer::Create(scaledWidth, scaledHeight);
+  if (adapted_height != height) {
+    scaledBuffer = webrtc::I420Buffer::Create(adapted_width, adapted_height);
     scaledBuffer->ScaleFrom(*unscaledBuffer);
   }
 
   webrtc::VideoFrame frame(scaledBuffer, webrtc::kVideoRotation_0,
-                           rtc::TimeMicros());
+                           translated_camera_time);
 
-  OnFrame(frame, scaledWidth, scaledHeight);
+  OnFrame(frame, adapted_width, adapted_height);
 }
 
 void VideoCapturer::Stop() {}
