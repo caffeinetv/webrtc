@@ -143,8 +143,8 @@ CAFFEINE_API
 void caff_send_video(caff_stream_handle stream_handle,
                      uint8_t const* frame_data,
                      size_t frame_bytes,
-                     uint32_t width,
-                     uint32_t height,
+                     int32_t width,
+                     int32_t height,
                      caff_format format) {
   RTC_DCHECK(frame_data);
   RTC_DCHECK(frame_bytes);

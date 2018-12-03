@@ -25,8 +25,8 @@ class VideoCapturer : public cricket::VideoCapturer {
 
   void SendVideo(uint8_t const* frame,
                  size_t frameBytes,
-                 uint32_t width,
-                 uint32_t height,
+                 int32_t width,
+                 int32_t height,
                  webrtc::VideoType format);
 
   virtual cricket::CaptureState Start(

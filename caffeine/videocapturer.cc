@@ -65,16 +65,16 @@ cricket::CaptureState VideoCapturer::Start(cricket::VideoFormat const& format) {
   return cricket::CS_STARTING;
 }
 
-static uint32_t const maxHeight = 720;
-static uint32_t const minDimension = 360;
+static int32_t const maxHeight = 720;
+static int32_t const minDimension = 360;
 
 // FPS limit is 30 (fudged a bit for variance)
 static int64_t const minFrameMicros = (1000000 / 32);
 
 void VideoCapturer::SendVideo(uint8_t const* frameData,
                               size_t frameByteCount,
-                              uint32_t width,
-                              uint32_t height,
+                              int32_t width,
+                              int32_t height,
                               webrtc::VideoType format) {
   auto const now = rtc::TimeMicros();
   auto span = now - lastFrameMicros;

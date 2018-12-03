@@ -172,8 +172,8 @@ void Stream::SendAudio(uint8_t const* samples, size_t samples_per_channel) {
 
 void Stream::SendVideo(uint8_t const* frameData,
                        size_t frameBytes,
-                       uint32_t width,
-                       uint32_t height,
+                       int32_t width,
+                       int32_t height,
                        caff_format format) {
   RTC_DCHECK(started);
   videoCapturer->SendVideo(frameData, frameBytes, width, height,
