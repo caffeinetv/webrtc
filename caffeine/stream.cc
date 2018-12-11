@@ -47,7 +47,6 @@ void Stream::Start(
 
     cricket::AudioOptions audioOptions;
     audioOptions.echo_cancellation = false;
-    audioOptions.auto_gain_control = false;
     audioOptions.noise_suppression = false;
     audioOptions.highpass_filter = false;
     audioOptions.stereo_swapping = false;
