@@ -35,11 +35,11 @@ void Stream::Start(
     std::function<void()> startedCallback,
     std::function<void(caff_error)> failedCallback) {
   std::thread startThread([=] {
-    webrtc::PeerConnectionInterface::IceServer server;
-    server.urls.push_back("stun:stun.l.google.com:19302");
+    //webrtc::PeerConnectionInterface::IceServer server;
+    //server.urls.push_back("stun:stun.l.google.com:19302");
 
     webrtc::PeerConnectionInterface::RTCConfiguration config;
-    config.servers.push_back(server);
+    //config.servers.push_back(server);
 
     videoCapturer = new VideoCapturer;
     auto videoSource = factory->CreateVideoSource(videoCapturer);
