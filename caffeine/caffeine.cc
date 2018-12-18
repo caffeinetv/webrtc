@@ -40,6 +40,8 @@ char const* caff_error_string(caff_error error) {
       return "Error during ICE negotiation";
     case CAFF_ERROR_DISCONNECTED:
       return "Disconnected from server";
+    case CAFF_ERROR_TAKEOVER:
+      return "Stream takeover";
     case CAFF_ERROR_UNKNOWN:
     default:
       return "Unknown error";
