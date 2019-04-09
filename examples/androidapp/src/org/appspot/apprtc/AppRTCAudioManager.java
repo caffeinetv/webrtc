@@ -256,7 +256,7 @@ public class AppRTCAudioManager {
 
     // Request audio playout focus (without ducking) and install listener for changes in focus.
     int result = audioManager.requestAudioFocus(audioFocusChangeListener,
-        AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+        AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
     if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
       Log.d(TAG, "Audio focus request granted for VOICE_CALL streams");
     } else {
