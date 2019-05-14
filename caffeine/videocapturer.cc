@@ -75,14 +75,16 @@ void VideoCapturer::SendVideo(uint8_t const* frameData,
                               size_t frameByteCount,
                               int32_t width,
                               int32_t height,
+                              int64_t timestampMicros,
                               webrtc::VideoType format) {
-  auto const now = rtc::TimeMicros();
-  auto span = now - lastFrameMicros;
-  if (span < minFrameMicros) {
-    RTC_LOG(LS_INFO) << "Dropping frame";
-    return;
-  }
-  lastFrameMicros = now;
+  //auto span = timestampMicros - lastFrameMicros;
+  //if (span < minFrameMicros) {
+  //  RTC_LOG(LS_INFO) << "Dropping frame";
+  //  return;
+  //}
+  //lastFrameMicros = timestampMicros;
+  RTC_UNUSED(lastFrameMicros);
+  RTC_UNUSED(minFrameMicros);
 
   int32_t adapted_width = minDimension;
   int32_t adapted_height = minDimension;
@@ -92,7 +94,7 @@ void VideoCapturer::SendVideo(uint8_t const* frameData,
   int32_t crop_y;
   int64_t translated_camera_time;
 
-  if (!AdaptFrame(width, height, now, now,
+  if (!AdaptFrame(width, height, timestampMicros, timestampMicros,
                   &adapted_width, &adapted_height, &crop_width, &crop_height,
                   &crop_x, &crop_y, &translated_camera_time)) {
     RTC_LOG(LS_INFO) << "Adapter dropped the frame.";

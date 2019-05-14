@@ -93,6 +93,7 @@ class Stream {
                  size_t frameBytes,
                  int32_t width,
                  int32_t height,
+                 int64_t timestampMicros,
                  caff_format format);
 
  private:

@@ -27,6 +27,7 @@ class VideoCapturer : public cricket::VideoCapturer {
                  size_t frameBytes,
                  int32_t width,
                  int32_t height,
+                 int64_t timestampMicros,
                  webrtc::VideoType format);
 
   virtual cricket::CaptureState Start(

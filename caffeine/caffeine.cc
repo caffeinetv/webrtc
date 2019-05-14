@@ -147,6 +147,7 @@ void caff_send_video(caff_stream_handle stream_handle,
                      size_t frame_bytes,
                      int32_t width,
                      int32_t height,
+                     int64_t timestampMicros,
                      caff_format format) {
   RTC_DCHECK(frame_data);
   RTC_DCHECK(frame_bytes);
@@ -155,7 +156,7 @@ void caff_send_video(caff_stream_handle stream_handle,
   RTC_DCHECK(format);
 
   auto stream = reinterpret_cast<Stream*>(stream_handle);
-  stream->SendVideo(frame_data, frame_bytes, width, height, format);
+  stream->SendVideo(frame_data, frame_bytes, width, height, timestampMicros, format);
 }
 
 CAFFEINE_API

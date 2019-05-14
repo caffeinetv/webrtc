@@ -173,9 +173,10 @@ void Stream::SendVideo(uint8_t const* frameData,
                        size_t frameBytes,
                        int32_t width,
                        int32_t height,
+                       int64_t timestampMicros,
                        caff_format format) {
   RTC_DCHECK(started);
-  videoCapturer->SendVideo(frameData, frameBytes, width, height,
+  videoCapturer->SendVideo(frameData, frameBytes, width, height, timestampMicros,
                            static_cast<webrtc::VideoType>(format));
 }
 

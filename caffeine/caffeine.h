@@ -166,6 +166,7 @@ void caff_send_video(caff_stream_handle stream_handle,
                      size_t frame_bytes,
                      int32_t width,
                      int32_t height,
+                     int64_t timestampMicrosec,
                      caff_format format);
 
 /* End a Caffeine stream
