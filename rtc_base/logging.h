@@ -119,6 +119,7 @@ class LogSink {
   virtual void OnLogMessage(const std::string& msg,
                             LoggingSeverity severity,
                             const char* tag);
+  virtual void OnLogMessage(const std::string& msg, LoggingSeverity severity);
   virtual void OnLogMessage(const std::string& message) = 0;
 };
 
