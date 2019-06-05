@@ -1,0 +1,44 @@
+# Building and packaging for libcaffeine
+
+TODO: Clean up and automate
+
+## Windows
+
+### Building
+
+```powershell
+gn gen out\Debug_x64 --args="rtc_include_tests=false is_debug=true rtc_use_h264=true" --ide=vs2017
+gn gen out\Release_x64 --args="rtc_include_tests=false is_debug=false rtc_use_h264=true" --ide=vs2017
+gn gen out\Debug_x86 --args="rtc_include_tests=false is_debug=true rtc_use_h264=true target_cpu=`\`"x86`\`"" --ide=vs2017
+gn gen out\Release_x86 --args="rtc_include_tests=false is_debug=false rtc_use_h264=true target_cpu=`\`"x86`\`"" --ide=vs2017
+ninja -C out\Debug_x64 webrtc
+ninja -C out\Release_x64 webrtc
+ninja -C out\Debug_x86 webrtc
+ninja -C out\Release_x86 webrtc
+```
+
+### Packaging
+
+TODO: is there a way to do these 7z commands in one?
+
+```powershell
+$zip = "webrtc-prebuilt-windows.7z"
+
+7z a $zip "-ir!./*.h" `
+    "-x!./build" `
+    "-x!./buildtools" `
+    "-x!./examples" `
+    "-x!./ios" `
+    "-x!./ortc" `
+    "-x!./rtc_tools" `
+    "-x!./sdk" `
+    "-x!./stats" `
+    "-x!./test" `
+    "-x!./testing" `
+    "-x!./third_party" `
+    "-x!./tools"
+
+7z a $zip -r "-i!third_party/abseil-cpp/*.h" "-i!third_party/libyuv/*.h"
+
+7z a $zip -r "-i!out/*.o" "-i!out/*.obj" "-i!out/*.lib"
+```
