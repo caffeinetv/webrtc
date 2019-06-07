@@ -42,3 +42,36 @@ $zip = "webrtc-prebuilt-windows.7z"
 
 7z a $zip -r "-i!out/*.o" "-i!out/*.obj" "-i!out/*.lib"
 ```
+
+## macOS
+
+### Building
+
+```sh
+gn gen out/macOS/Debug --args="use_rtti=true" --ide=xcode
+gn gen out/macOS/Release --args="is_debug=false use_rtti=true" --ide=xcode
+ninja -C out/macOS/Debug webrtc
+ninja -C out/macOS/Release webrtc
+```
+
+### Packaging
+
+```sh
+7z a $zip '-ir!./*.h' \
+    '-x!./build' \
+    '-x!./buildtools' \
+    '-x!./examples' \
+    '-x!./ios' \
+    '-x!./ortc' \
+    '-x!./rtc_tools' \
+    '-x!./sdk' \
+    '-x!./stats' \
+    '-x!./test' \
+    '-x!./testing' \
+    '-x!./third_party' \
+    '-x!./tools'
+
+7z a $zip -r '-i!third_party/abseil-cpp/*.h' '-i!third_party/libyuv/*.h'
+
+7z a $zip '-ir!out/*.a'
+```
