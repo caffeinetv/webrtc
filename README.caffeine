@@ -67,6 +67,7 @@ export zip="webrtc-prebuilt-macos.7z"
     '-x!./buildtools' \
     '-x!./examples' \
     '-x!./ios' \
+    '-x!./out_ios_libs' \
     '-x!./ortc' \
     '-x!./rtc_tools' \
     '-x!./sdk' \
@@ -81,5 +82,5 @@ export zip="webrtc-prebuilt-macos.7z"
     '-i!third_party/libyuv/*.h' \
     '-i!third_party/boringssl/src/include/*.h'
 
-7z a $zip '-ir!out/*.a'
+7z a $zip '-ir!out/macOS/*.a'
 ```
