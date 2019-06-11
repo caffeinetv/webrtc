@@ -38,7 +38,10 @@ $zip = "webrtc-prebuilt-windows.7z"
     "-x!./third_party" `
     "-x!./tools"
 
-7z a $zip -r "-i!third_party/abseil-cpp/*.h" "-i!third_party/libyuv/*.h"
+7z a $zip -r `
+    "-i!third_party/abseil-cpp/*.h" `
+    "-i!third_party/libyuv/*.h" `
+    "-i!third_party/boringssl/src/include/*.h"
 
 7z a $zip -r "-i!out/*.o" "-i!out/*.obj" "-i!out/*.lib"
 ```
@@ -57,6 +60,8 @@ ninja -C out/macOS/Release webrtc
 ### Packaging
 
 ```sh
+export zip="webrtc-prebuilt-macos.7z"
+
 7z a $zip '-ir!./*.h' \
     '-x!./build' \
     '-x!./buildtools' \
@@ -71,7 +76,10 @@ ninja -C out/macOS/Release webrtc
     '-x!./third_party' \
     '-x!./tools'
 
-7z a $zip -r '-i!third_party/abseil-cpp/*.h' '-i!third_party/libyuv/*.h'
+7z a $zip -r \
+    '-i!third_party/abseil-cpp/*.h' \
+    '-i!third_party/libyuv/*.h' \
+    '-i!third_party/boringssl/src/include/*.h'
 
 7z a $zip '-ir!out/*.a'
 ```
