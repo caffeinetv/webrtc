@@ -12,7 +12,7 @@ jobs:
       shell: bash
       run: |
         curl -o depot_tools.zip https://storage.googleapis.com/chrome-infra/depot_tools.zip
-        7z x depot_tools -o"%TEMP%/depot_tools"
+        7z x depot_tools.zip -o"%TEMP%/depot_tools"
     - name: "Configure"
       shell: cmd
       run: |
