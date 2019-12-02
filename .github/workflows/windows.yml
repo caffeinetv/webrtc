@@ -19,9 +19,10 @@ jobs:
         SET "PATH=%TEMP%\depot_tools;%PATH%"
         SET "DEPOT_TOOLS_WIN_TOOLCHAIN=0"
         SET "GYP_MSVS_VERSION=2017"
-        CALL gclient sync
-        CALL gn gen out/Release_x86 --args="rtc_include_tests=false rtc_use_h264=true target_cpu=\"x86\" symbol_level=0 is_debug=false"
-        CALL gn gen out/Release_x64 --args="rtc_include_tests=false rtc_use_h264=true target_cpu=\"x86\" symbol_level=0 is_debug=false"
+        SET 
+        gclient sync
+        gn gen out/Release_x86 --args="rtc_include_tests=false rtc_use_h264=true target_cpu=\"x86\" symbol_level=0 is_debug=false"
+        gn gen out/Release_x64 --args="rtc_include_tests=false rtc_use_h264=true target_cpu=\"x86\" symbol_level=0 is_debug=false"
     - name: "Build"
       shell: cmd
       run: |
