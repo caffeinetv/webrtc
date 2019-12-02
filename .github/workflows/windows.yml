@@ -12,18 +12,19 @@ jobs:
       shell: bash
       run: |
         curl -o depot_tools.zip https://storage.googleapis.com/chrome-infra/depot_tools.zip
-        7z x -o"%TEMP%\\depot_tools" depot_tools.zip
+        7z x -o"depot_tools" depot_tools.zip
     - name: "Configure"
       shell: cmd
       run: |
-        SET "PATH=%TEMP%\\depot_tools;%PATH%"
+        SET "PATH=%CD%\depot_tools;%PATH%"
         SET "DEPOT_TOOLS_WIN_TOOLCHAIN=0"
         SET "GYP_MSVS_VERSION=2017"
-        SET 
-        DIR "%TEMP%\\depot_tools"
+        pushd depot_tools
+        DIR 
+        popd
         gclient sync
         gn gen out/Release_x86 --args="rtc_include_tests=false rtc_use_h264=true target_cpu=\"x86\" symbol_level=0 is_debug=false"
-        gn gen out/Release_x64 --args="rtc_include_tests=false rtc_use_h264=true target_cpu=\"x86\" symbol_level=0 is_debug=false"
+        gn gen out/Release_x64 --args="rtc_include_tests=false rtc_use_h264=true target_cpu=\"x64\" symbol_level=0 is_debug=false"
     - name: "Build"
       shell: cmd
       run: |
