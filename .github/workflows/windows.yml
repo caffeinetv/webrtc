@@ -11,7 +11,7 @@ jobs:
     - name: "Download Depot Tools"
       shell: bash
       run: |
-        wget -Odepot_tools.zip https://storage.googleapis.com/chrome-infra/depot_tools.zip
+        curl -o depot_tools.zip https://storage.googleapis.com/chrome-infra/depot_tools.zip
         7z x depot_tools -o"%TEMP%/depot_tools"
     - name: "Configure"
       shell: cmd
